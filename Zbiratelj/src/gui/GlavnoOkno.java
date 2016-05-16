@@ -54,9 +54,11 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		menuBar.add(mnMeni);
 		
 		mntmMojeZbirke = new JMenuItem("Moje zbirke");
+		mntmMojeZbirke.addActionListener(this);
 		mnMeni.add(mntmMojeZbirke);
 		
 		mntmUstvariNovoZbirko = new JMenuItem("Ustvari novo zbirko");
+		mntmUstvariNovoZbirko.addActionListener(this);
 		mnMeni.add(mntmUstvariNovoZbirko);
 		
 		mntmIzhod = new JMenuItem("Izhod");
@@ -83,12 +85,16 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object vir = arg0.getSource();
-		if (vir == mntmIzhod){
-			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		if (vir == mntmMojeZbirke){
+			
 		}
 		else if (vir == mntmUstvariNovoZbirko){
+			NovaZbirkaWindow dialog = new NovaZbirkaWindow();
+			dialog.setVisible(true);
 		}
-		
+		else if (vir == mntmIzhod){
+			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		}
 	}
 
 }
