@@ -5,6 +5,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
+
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import java.awt.Insets;
@@ -17,11 +18,11 @@ import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
 public class NovaZbirkaWindow extends JDialog implements ActionListener{
-	private JTextField textField;
 	private List<JTextField> arrTextField;
+	private List<String> stolpci;
 	private JButton btnShrani;
 	private JPanel contentPanel;
-	private int rowCounter = 2;
+	private int rowCounter = 1;
 	private JButton button;
 
 
@@ -47,9 +48,10 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		gbc_lblImeZbirke.insets = new Insets(0, 0, 5, 5);
 		gbc_lblImeZbirke.gridx = 1;
 		gbc_lblImeZbirke.gridy = 0;
+		gbc_lblImeZbirke.weighty = 0;
 		contentPanel.add(lblImeZbirke, gbc_lblImeZbirke);
 		
-		textField = new JTextField();
+		JTextField textField = new JTextField();
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.insets = new Insets(0, 0, 5, 0);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
@@ -57,6 +59,7 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		gbc_textField.gridy = 0;
 		contentPanel.add(textField, gbc_textField);
 		textField.setColumns(10);
+		arrTextField.add(textField);
 		
 		button = new JButton("+");
 		button.addActionListener(this);
@@ -72,6 +75,7 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		gbc_lblStolpec.insets = new Insets(0, 0, 5, 5);
 		gbc_lblStolpec.gridx = 1;
 		gbc_lblStolpec.gridy = rowCounter;
+		gbc_lblStolpec.weighty = 0;
 		contentPanel.add(lblStolpec, gbc_lblStolpec);
 		
 		JTextField textField_1 = new JTextField();
@@ -82,11 +86,13 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		gbc_textField_1.gridy = rowCounter;
 		contentPanel.add(textField_1, gbc_textField_1);
 		textField_1.setColumns(10);
+		arrTextField.add(textField_1);
 		
 		btnShrani = new JButton("Shrani");
 		GridBagConstraints gbc_btnShrani = new GridBagConstraints();
 		gbc_btnShrani.gridx = 2;
 		gbc_btnShrani.gridy = rowCounter+1;
+		btnShrani.addActionListener(this);
 		contentPanel.add(btnShrani, gbc_btnShrani);
 
 	}
@@ -98,20 +104,19 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		if (vir == button){
 			rowCounter++;
 			
-			contentPanel.remove(button);
 			GridBagConstraints gbc_button = new GridBagConstraints();
 			gbc_button.insets = new Insets(0, 0, 0, 5);
 			gbc_button.gridx = 0;
 			gbc_button.gridy = rowCounter;
-			gbc_button.anchor = GridBagConstraints.NORTH;
 			contentPanel.add(button, gbc_button);
 			
-			JLabel lblStolpec = new JLabel("Stolpec "+(rowCounter-1));
+			JLabel lblStolpec = new JLabel("Stolpec "+rowCounter);
 			GridBagConstraints gbc_lblStolpec = new GridBagConstraints();
 			gbc_lblStolpec.insets = new Insets(0, 0, 0, 5);
 			gbc_lblStolpec.gridx = 1;
 			gbc_lblStolpec.gridy = rowCounter;
-			gbc_lblStolpec.anchor = GridBagConstraints.NORTH;
+			gbc_lblStolpec.anchor = GridBagConstraints.EAST;
+			gbc_lblStolpec.weighty = 0;
 			contentPanel.add(lblStolpec, gbc_lblStolpec);
 			
 			JTextField textField = new JTextField();
@@ -119,7 +124,6 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 			gbc_textField.gridx = 2;
 			gbc_textField.gridy = rowCounter;
-			gbc_textField.anchor = GridBagConstraints.NORTH;
 			contentPanel.add(textField, gbc_textField);
 			textField.setColumns(4);
 			arrTextField.add(textField);
@@ -127,15 +131,17 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			GridBagConstraints gbc_btnShrani = new GridBagConstraints();
 			gbc_btnShrani.gridx = 2;
 			gbc_btnShrani.gridy = rowCounter+1;
-			gbc_btnShrani.anchor = GridBagConstraints.NORTH;
 			contentPanel.add(btnShrani, gbc_btnShrani);
 			
-			contentPanel.revalidate();
-			contentPanel.repaint();
-			System.out.println(arrTextField);
+			contentPanel.updateUI();
 		}
 		else if (vir == btnShrani){
-			
+			stolpci = new ArrayList<String>();
+			for (JTextField polje : arrTextField){
+				stolpci.add(polje.getText());
+			}
+			System.out.println(stolpci);
+			dispose();
 		}
 	}
 
