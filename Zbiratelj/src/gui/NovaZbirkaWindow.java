@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.swing.JTextField;
 
+import baza.PripravljalecPodatkov;
+
 @SuppressWarnings("serial")
 public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	private List<JTextField> arrTextField;
@@ -30,17 +32,16 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	 * Create the dialog.
 	 */
 	public NovaZbirkaWindow() {
-		setSize(500, 500);
 		arrTextField = new ArrayList<JTextField>();
 		
 		contentPanel = new JPanel();
-		getContentPane().add(contentPanel);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
 		gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
+		getContentPane().add(contentPanel);
 		
 		JLabel lblImeZbirke = new JLabel("Ime zbirke");
 		GridBagConstraints gbc_lblImeZbirke = new GridBagConstraints();
@@ -95,6 +96,7 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		btnShrani.addActionListener(this);
 		contentPanel.add(btnShrani, gbc_btnShrani);
 
+		pack();
 	}
 
 
@@ -134,13 +136,14 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			contentPanel.add(btnShrani, gbc_btnShrani);
 			
 			contentPanel.updateUI();
+			pack();
 		}
 		else if (vir == btnShrani){
 			stolpci = new ArrayList<String>();
 			for (JTextField polje : arrTextField){
 				stolpci.add(polje.getText());
 			}
-			System.out.println(stolpci);
+			PripravljalecPodatkov.dodajZbirko(stolpci);
 			dispose();
 		}
 	}
