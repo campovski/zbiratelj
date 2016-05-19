@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JCheckBox;
+
+import gui.GlavnoOkno;
+
 public class PripravljalecPodatkov {
 	
-	private Map<String, List<List<String>>> slovar;
-	
+	private static Map<String, List<List<String>>> slovar;
+	private static ArrayList<String> seznamZbirkZaIzbris;
+
 	public PripravljalecPodatkov(){
 		slovar = new HashMap<String, List<List<String>>>();
 		List<List<String>> seznamSeznamovFilmi = new ArrayList<List<String>>();
@@ -53,5 +58,45 @@ public class PripravljalecPodatkov {
 	 */
 	public Map<String, List<List<String>>> getSlovar() {
 		return slovar;
-	}	
+	}
+	
+	/**
+	 * @return the seznamZbirkZaIzbris
+	 */
+	public static ArrayList<String> getSeznamZbirkZaIzbris() {
+		return seznamZbirkZaIzbris;
+	}
+	
+	public static void dodajZbirko(List<String> stolpci){
+		List<List<String>> seznamSeznamov = new ArrayList<List<String>>();
+		List<String> prvaVrstica = new ArrayList<String>();
+		for (int i = 1; i < stolpci.size(); i++){
+			prvaVrstica.add(stolpci.get(i));
+		}
+		seznamSeznamov.add(prvaVrstica);
+		slovar.put(stolpci.get(0), seznamSeznamov);
+		System.out.println(slovar);
+	}
+	
+	public static void izbrisiZbirke(){
+		//TODO po generiranju seznama pocakaj, kaj bo naredilo GlavnoOkno
+		seznamZbirkZaIzbris = new ArrayList<String>();
+		Map<JCheckBox, String> slovarCheckGumbov = GlavnoOkno.getSlovarCheckBoxZbirka();
+		for (JCheckBox kljuc : slovarCheckGumbov.keySet()){
+			if (kljuc.isSelected()){
+				seznamZbirkZaIzbris.add(slovarCheckGumbov.get(kljuc));
+			}
+		}
+	}
+	
+	public static void izbrisiElemente(){
+		List<List<String>> seznamElementovZaIzbris = new ArrayList<List<String>>();
+		Map<JCheckBox, List<String>> slovarCheckBoxElement = GlavnoOkno.getSlovarCheckBoxElement();
+		for (JCheckBox kljuc : slovarCheckBoxElement.keySet()){
+			if (kljuc.isSelected()){
+				seznamElementovZaIzbris.add(slovarCheckBoxElement.get(kljuc));
+			}
+		}
+		System.out.println(seznamElementovZaIzbris);
+	}
 }
