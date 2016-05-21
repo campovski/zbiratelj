@@ -18,6 +18,12 @@ import javax.swing.JTextField;
 
 import baza.PripravljalecPodatkov;
 
+/**
+ * @author campovski
+ * Razred poskrbi za izris okna, v katerem lahko vnesemo podatke o zbirki,
+ * ki jo zelimo na novo dodati (torej zbirko, katere se ni v bazi). Ob poskusu
+ * vnosa zbirke z istim imenom, javi napako.
+ */
 @SuppressWarnings("serial")
 public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	private List<JTextField> arrTextField;
@@ -26,10 +32,12 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	private JPanel contentPanel;
 	private int rowCounter = 1;
 	private JButton button;
+	private JButton btnOk;
+	private JDialog error;
 
 
 	/**
-	 * Create the dialog.
+	 * Naredi JDialog, ki omogoca vnos imena zbirke in imen stolpcev.
 	 */
 	public NovaZbirkaWindow() {
 		arrTextField = new ArrayList<JTextField>();
@@ -143,8 +151,45 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			for (JTextField polje : arrTextField){
 				stolpci.add(polje.getText());
 			}
-			PripravljalecPodatkov.dodajZbirko(stolpci);
-			dispose();
+			
+			if (GlavnoOkno.slovarSS.keySet().contains(stolpci.get(0))){
+				error = new JDialog();
+				error.setTitle("Napaka");
+				
+				JPanel contentPanel = new JPanel();
+				GridBagLayout gbl_contentPanel = new GridBagLayout();
+				gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
+				gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+				gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+				gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+				contentPanel.setLayout(gbl_contentPanel);
+				error.getContentPane().add(contentPanel);
+				
+				JLabel napis = new JLabel("<html>Zbirka z imenom '"+stolpci.get(0)+"' ze obstaja!<br>Prosim vnesi drugo ime.</html>");
+				GridBagConstraints gbc_napis = new GridBagConstraints();
+				gbc_napis.insets = new Insets(0, 0, 0, 5);
+				gbc_napis.gridx = 0;
+				gbc_napis.gridy = 0;
+				contentPanel.add(napis, gbc_napis);
+				
+				btnOk = new JButton("OK");
+				btnOk.addActionListener(this);
+				GridBagConstraints gbc_ok = new GridBagConstraints();
+				gbc_ok.insets = new Insets(0, 0, 0, 5);
+				gbc_ok.gridx = 0;
+				gbc_ok.gridy = 1;
+				contentPanel.add(btnOk, gbc_ok);
+
+				error.pack();
+				error.setVisible(true);
+			}
+			else {
+				PripravljalecPodatkov.dodajZbirko(stolpci);
+				dispose();
+			}
+		}
+		else if (vir == btnOk){
+			error.dispose();
 		}
 	}
 

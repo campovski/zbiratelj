@@ -9,11 +9,21 @@ import javax.swing.JCheckBox;
 
 import gui.GlavnoOkno;
 
+/**
+ * @author campovski
+ * Razred PripravljalecPodatkov skrbi za zvezo med uporabniskim vmesnikom in SqlManager-jem.
+ * Tako sta njegovi nalogi priprava podatkov za posiljanje v bazo in dajanja ukazov, kaj naj
+ * SqlManager naredi s podatki. Prav tako lahko PripravljalecPodatkov zahteva podatke iz baze,
+ * torej jih lahko od tam tudi dobi.
+ */
 public class PripravljalecPodatkov {
 	
 	private static Map<String, List<List<String>>> slovar;
 	private static ArrayList<String> seznamZbirkZaIzbris;
 
+	/**
+	 * Naredi testni slovar. Mogoce v prihodnosti se kaj drugega...
+	 */
 	public PripravljalecPodatkov(){
 		slovar = new HashMap<String, List<List<String>>>();
 		List<List<String>> seznamSeznamovFilmi = new ArrayList<List<String>>();
@@ -40,7 +50,7 @@ public class PripravljalecPodatkov {
 		seznamFilmskiPlakatiStolpci.add("Velikost");
 		seznamSeznamovFilmskiPlakati.add(seznamFilmskiPlakatiStolpci);
 		List<String> seznamFilmskiPlakati1 = new ArrayList<String>();
-		seznamFilmskiPlakati1.add("Huston");
+		seznamFilmskiPlakati1.add("Houston we have a problem");
 		seznamFilmskiPlakati1.add("Velik");
 		seznamSeznamovFilmskiPlakati.add(seznamFilmskiPlakati1);
 		List<String> seznamFilmskiPlakati2 = new ArrayList<String>();
@@ -52,21 +62,12 @@ public class PripravljalecPodatkov {
 		slovar.put("Filmi", seznamSeznamovFilmi);
 		slovar.put("Filmski plakati", seznamSeznamovFilmskiPlakati);
 	}
-
-	/**
-	 * @return the slovar
-	 */
-	public Map<String, List<List<String>>> getSlovar() {
-		return slovar;
-	}
 	
 	/**
-	 * @return the seznamZbirkZaIzbris
+	 * @param stolpci
+	 * Metoda dobljen seznam doda v slovar, pri cemer je prvi element stolpcev
+	 * ime zbirke, ostali pa so imena stolpcev. Pred tem zbirko se doda v bazo.
 	 */
-	public static ArrayList<String> getSeznamZbirkZaIzbris() {
-		return seznamZbirkZaIzbris;
-	}
-	
 	public static void dodajZbirko(List<String> stolpci){
 		List<List<String>> seznamSeznamov = new ArrayList<List<String>>();
 		List<String> prvaVrstica = new ArrayList<String>();
@@ -74,10 +75,16 @@ public class PripravljalecPodatkov {
 			prvaVrstica.add(stolpci.get(i));
 		}
 		seznamSeznamov.add(prvaVrstica);
+		
+		SqlManager.dodajZbirko(stolpci);
+		
 		slovar.put(stolpci.get(0), seznamSeznamov);
-		System.out.println(slovar);
 	}
 	
+	/**
+	 * Metoda se pozene v novem vlaknu, ki po branju JCheckBox-ov pocaka, ali
+	 * bo uporabnik potrdil izbris. Ce ga, nadaljujemo, drugace se vlakno ustavi.
+	 */
 	public static void izbrisiZbirke(){
 		//TODO po generiranju seznama pocakaj, kaj bo naredilo GlavnoOkno
 		seznamZbirkZaIzbris = new ArrayList<String>();
@@ -87,8 +94,17 @@ public class PripravljalecPodatkov {
 				seznamZbirkZaIzbris.add(slovarCheckGumbov.get(kljuc));
 			}
 		}
+		
+		// wait...
+		SqlManager.odstraniZbirke(seznamZbirkZaIzbris);
+		System.out.println(seznamZbirkZaIzbris);
 	}
 	
+	/**
+	 * Metoda iz JCheckBoxov prebere, katere elemente je potrebno izbrisati. Ker elementi
+	 * niso tako nevarni za izbris, kakor zbirke, tu ni potrebno preverjati, ali res zelimo
+	 * izbris ali ne.
+	 */
 	public static void izbrisiElemente(){
 		List<List<String>> seznamElementovZaIzbris = new ArrayList<List<String>>();
 		Map<JCheckBox, List<String>> slovarCheckBoxElement = GlavnoOkno.getSlovarCheckBoxElement();
@@ -97,6 +113,21 @@ public class PripravljalecPodatkov {
 				seznamElementovZaIzbris.add(slovarCheckBoxElement.get(kljuc));
 			}
 		}
+		SqlManager.odstraniElemente(GlavnoOkno.getZbirkaZaRisanje(), seznamElementovZaIzbris);
 		System.out.println(seznamElementovZaIzbris);
+	}
+
+	/**
+	 * @return slovar
+	 */
+	public Map<String, List<List<String>>> getSlovar() {
+		return slovar;
+	}
+	
+	/**
+	 * @return seznamZbirkZaIzbris
+	 */
+	public static ArrayList<String> getSeznamZbirkZaIzbris() {
+		return seznamZbirkZaIzbris;
 	}
 }

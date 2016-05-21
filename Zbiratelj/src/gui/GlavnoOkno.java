@@ -31,8 +31,13 @@ import java.awt.GridBagConstraints;
 
 /**
  * @author nina
- * stanje 0: mojeZbirke
- * stanje 1: narisiZbirko
+ * GlavnoOkno je razred, ki skrbi za glavni uporabniski vmesnik. V njem se
+ * izpisujejo zbirke, ki jih potem lahko izberemo za ogled, v njem dolocamo,
+ * katere zbirke ali elemente zbirk zelimo izbrisati.
+ * 
+ * Mozna stanja:
+ * stanje = 0: mojeZbirke
+ * stanje = 1: narisiZbirko
  */
 @SuppressWarnings("serial")
 public class GlavnoOkno extends JFrame implements ActionListener{
@@ -45,21 +50,21 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	private JMenuItem mntmOmogociUrejanje;
 	private JMenuItem mntmKonajUrejanje;
 	private JMenuItem mntmIzhod;
+	private JMenu mnUredi;
+	private JMenuItem mntmNovElement;
 	
 	private Map<JButton, String> slovarGumbov;
 	private JButton buttonShraniSpremembe;
-	private Map<String, List<List<String>>> slovarSS;
+	protected static Map<String, List<List<String>>> slovarSS;
 	private static Map<JCheckBox, String> slovarCheckBoxZbirka;
 	private static Map<JCheckBox, List<String>> slovarCheckBoxElement;
 
 	private boolean urejanjeOmogoceno = false;
 	private int stanje;
-	private String zbirkaZaRisanje = null;
-	private JMenu mnUredi;
-	private JMenuItem mntmNovElement;
+	private static String zbirkaZaRisanje = null;
 
 	/**
-	 * Launch the application.
+	 * Zacni program.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -75,7 +80,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	}
 
 	/**
-	 * Create the frame.
+	 * Naredi frame.
 	 */
 	public GlavnoOkno() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -136,6 +141,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		Object vir = arg0.getSource();
 		if (vir == mntmMojeZbirke){
 			stanje = 0;
+			zbirkaZaRisanje = null;
 			setupUI();
 		}
 		else if (vir == mntmUstvariNovoZbirko){
@@ -197,6 +203,10 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		}
 	}
 	
+	/**
+	 * Metoda, ki narise UI. To stori tako, da najprej pogleda, v katerem stanju smo
+	 * in ali lahko urejamo ter se potem na podlagi teh podatkov odloci, kaj naj narise.
+	 */
 	public void setupUI(){
 		contentPane.removeAll();
 		
@@ -219,6 +229,10 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		pack();
 	}
 	
+	/**
+	 * Metoda, ki narise moje zbirke, predstavljene z gumbi, ki potem odprejo posamezno zbirko.
+	 * Ce je omogoceno urejanje, dodamo se JCheckBox-e, ki omogocajo izbiro zbirk za izbris.
+	 */
 	public void mojeZbirke(){
 		PripravljalecPodatkov podatki = new PripravljalecPodatkov();
 		slovarSS = podatki.getSlovar();
@@ -249,6 +263,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		
 		if (urejanjeOmogoceno){
 			slovarCheckBoxZbirka = new HashMap<JCheckBox, String>();
+			
+			JLabel izbrisi = new JLabel("Izbrisi");
+			GridBagConstraints gbc_izbrisi = new GridBagConstraints();
+			gbc_izbrisi.insets = new Insets(0, 0, 5, 5);
+			gbc_izbrisi.gridx = 1;
+			gbc_izbrisi.gridy = 0;
+			contentPane.add(izbrisi, gbc_izbrisi);
+			
 			for (rowCounter = 1; rowCounter <= seznamZbirk.size(); rowCounter++){
 				JCheckBox box = new JCheckBox();
 				box.addActionListener(this);
@@ -256,7 +278,6 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 				gbc_box.insets = new Insets(0, 0, 5, 5);
 				gbc_box.gridx = 1;
 				gbc_box.gridy = rowCounter;
-				gbc_box.anchor = GridBagConstraints.WEST;
 				slovarCheckBoxZbirka.put(box, seznamZbirk.get(rowCounter-1));
 				contentPane.add(box, gbc_box);
 			}
@@ -267,13 +288,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			gbc_buttonShraniSpremembe.insets = new Insets(0, 0, 5, 5);
 			gbc_buttonShraniSpremembe.gridx = 1;
 			gbc_buttonShraniSpremembe.gridy = rowCounter;
-			gbc_buttonShraniSpremembe.anchor = GridBagConstraints.WEST;
 			contentPane.add(buttonShraniSpremembe, gbc_buttonShraniSpremembe);
 		}
 	}
 	
+	/**
+	 * Metoda narise zbirko, ki je shranjena v zbirkaZaRisanje. Ce je omogoceno urejanje, doda se JCheckBoxe.
+	 */
 	public void narisiZbirko(){
-		//TODO urejanje
 		assert zbirkaZaRisanje != null;
 		
 		List<List<String>> zbirka = slovarSS.get(zbirkaZaRisanje);
@@ -307,6 +329,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			int rowCounter;
 			int column = zbirka.get(0).size();
 			slovarCheckBoxElement = new HashMap<JCheckBox, List<String>>();
+			
+			JLabel izbrisi = new JLabel("Izbrisi");
+			GridBagConstraints gbc_izbrisi = new GridBagConstraints();
+			gbc_izbrisi.insets = new Insets(0, 0, 5, 5);
+			gbc_izbrisi.gridx = column;
+			gbc_izbrisi.gridy = 1;
+			contentPane.add(izbrisi, gbc_izbrisi);
+			
 			for (rowCounter = 2; rowCounter <= zbirka.size(); rowCounter++){
 				JCheckBox box = new JCheckBox();
 				box.addActionListener(this);
@@ -314,7 +344,6 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 				gbc_box.insets = new Insets(0, 0, 5, 5);
 				gbc_box.gridx = column;
 				gbc_box.gridy = rowCounter;
-				gbc_box.anchor = GridBagConstraints.WEST;
 				slovarCheckBoxElement.put(box, zbirka.get(rowCounter-1));
 				contentPane.add(box, gbc_box);
 			}
@@ -325,20 +354,30 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			gbc_buttonShraniSpremembe.insets = new Insets(0, 0, 5, 5);
 			gbc_buttonShraniSpremembe.gridx = column;
 			gbc_buttonShraniSpremembe.gridy = rowCounter+1;
-			gbc_buttonShraniSpremembe.anchor = GridBagConstraints.WEST;
 			contentPane.add(buttonShraniSpremembe, gbc_buttonShraniSpremembe);
 		}
 	}
 
 
+	/**
+	 * @return slovarCheckBoxZbirka
+	 */
 	public static Map<JCheckBox, String> getSlovarCheckBoxZbirka() {
 		return slovarCheckBoxZbirka;
 	}
 
 	/**
-	 * @return the slovarCheckBoxElement
+	 * @return slovarCheckBoxElement
 	 */
 	public static Map<JCheckBox, List<String>> getSlovarCheckBoxElement() {
 		return slovarCheckBoxElement;
 	}
+
+	/**
+	 * @return zbirkaZaRisanje
+	 */
+	public static String getZbirkaZaRisanje() {
+		return zbirkaZaRisanje;
+	}
+
 }
