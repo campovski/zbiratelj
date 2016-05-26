@@ -7,6 +7,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import baza.PripravljalecPodatkov;
 
@@ -39,6 +40,9 @@ import java.awt.GridBagConstraints;
  * stanje = 0: mojeZbirke
  * stanje = 1: narisiZbirko
  */
+
+// TODO ScrollBar mojeZbirke in narisiZbirko
+
 @SuppressWarnings("serial")
 public class GlavnoOkno extends JFrame implements ActionListener{
 	
@@ -61,6 +65,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 
 	private boolean urejanjeOmogoceno = false;
 	private int stanje;
+
+	private JButton btnPotrdi;
+
+	private JButton btnPreklici;
+
+	private ArrayList<String> seznamZbirkZaIzbris;
+
+	private JDialog potrdiIzbris;
 	private static String zbirkaZaRisanje = null;
 
 	/**
@@ -93,10 +105,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		
 		mntmMojeZbirke = new JMenuItem("Moje zbirke");
 		mntmMojeZbirke.addActionListener(this);
+		KeyStroke keyStrokeMojeZbirke = KeyStroke.getKeyStroke("control H");
+		mntmMojeZbirke.setAccelerator(keyStrokeMojeZbirke);
 		mnMeni.add(mntmMojeZbirke);
 		
 		mntmIzhod = new JMenuItem("Izhod");
 		mntmIzhod.addActionListener(this);
+		KeyStroke keyStrokeIzhod = KeyStroke.getKeyStroke("control X");
+		mntmIzhod.setAccelerator(keyStrokeIzhod);
 		mnMeni.add(mntmIzhod);
 		
 		mnUredi = new JMenu("Uredi");
@@ -107,19 +123,26 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		
 		mntmUstvariNovoZbirko = new JMenuItem("Nova zbirka");
 		mnDodaj.add(mntmUstvariNovoZbirko);
+		KeyStroke keyStrokeUstvariNovoZbirko = KeyStroke.getKeyStroke("control shift N");
+		mntmUstvariNovoZbirko.setAccelerator(keyStrokeUstvariNovoZbirko);
 		mntmUstvariNovoZbirko.addActionListener(this);
 		
 		mntmNovElement = new JMenuItem("Nov element");
 		mnDodaj.add(mntmNovElement);
+		KeyStroke keyStrokeNovElement = KeyStroke.getKeyStroke("control N");
+		mntmNovElement.setAccelerator(keyStrokeNovElement);
 		mntmNovElement.addActionListener(this);
-		//TODO metoda dodajNovElement in JDialog NovElementWindow
 		
 		mntmOmogociUrejanje = new JMenuItem("Omogoči urejanje");
 		mnUredi.add(mntmOmogociUrejanje);
+		KeyStroke keyStrokeOmogociUrejanje = KeyStroke.getKeyStroke("control E");
+		mntmOmogociUrejanje.setAccelerator(keyStrokeOmogociUrejanje);
 		mntmOmogociUrejanje.addActionListener(this);
 		
 		mntmKonajUrejanje = new JMenuItem("Končaj urejanje");
 		mnUredi.add(mntmKonajUrejanje);
+		KeyStroke keyStrokeKonajUrejanje = KeyStroke.getKeyStroke("control D");
+		mntmKonajUrejanje.setAccelerator(keyStrokeKonajUrejanje);
 		mntmKonajUrejanje.addActionListener(this);
 		
 		contentPane = new JPanel();
@@ -135,6 +158,74 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		setupUI();
 		pack();
 	}
+	
+	private void shraniUrejanje(){
+		if (stanje == 0){
+			seznamZbirkZaIzbris = new ArrayList<String>();
+			for (JCheckBox kljuc : slovarCheckBoxZbirka.keySet()){
+				if (kljuc.isSelected()){
+					seznamZbirkZaIzbris.add(slovarCheckBoxZbirka.get(kljuc));
+				}
+			}
+			
+			potrdiIzbris = new JDialog();
+			potrdiIzbris.setTitle("Opozorilo!");
+			
+			JPanel contentPanel = new JPanel();
+			GridBagLayout gbl_contentPanel = new GridBagLayout();
+			gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+			gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+			gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			contentPanel.setLayout(gbl_contentPanel);
+			potrdiIzbris.getContentPane().add(contentPanel);
+			
+			String napis = "<html>Ali ste prepričani, da želite odstraniti naslednje zbirke:<br>";
+			for (String zbirka : seznamZbirkZaIzbris){
+				napis += " - " + zbirka + "<br>";
+			}
+			napis += "</html>";
+			
+			JLabel lbl = new JLabel(napis);
+			GridBagConstraints gbc_lbl = new GridBagConstraints();
+			gbc_lbl.insets = new Insets(0, 0, 5, 5);
+			gbc_lbl.gridx = 0;
+			gbc_lbl.gridy = 0;
+			gbc_lbl.gridwidth = 2;
+			contentPanel.add(lbl, gbc_lbl);
+			
+			btnPotrdi = new JButton("Potrdi");
+			btnPotrdi.addActionListener(this);
+			GridBagConstraints gbc_btnPotrdi = new GridBagConstraints();
+			gbc_btnPotrdi.insets = new Insets(0, 0, 5, 5);
+			gbc_btnPotrdi.gridx = 0;
+			gbc_btnPotrdi.gridy = 1;
+			gbc_btnPotrdi.anchor = GridBagConstraints.EAST;
+			contentPanel.add(btnPotrdi, gbc_btnPotrdi);
+			
+			btnPreklici = new JButton("Prekliči");
+			btnPreklici.addActionListener(this);
+			GridBagConstraints gbc_btnPreklici = new GridBagConstraints();
+			gbc_btnPreklici.insets = new Insets(0, 0, 5, 5);
+			gbc_btnPreklici.gridx = 1;
+			gbc_btnPreklici.gridy = 1;
+			gbc_btnPreklici.anchor = GridBagConstraints.EAST;
+			contentPanel.add(btnPreklici, gbc_btnPreklici);
+			
+			potrdiIzbris.pack();
+			potrdiIzbris.setVisible(true);
+		}
+		else {
+			List<List<String>> seznamElementovZaIzbris = new ArrayList<List<String>>();
+			for (JCheckBox kljuc : slovarCheckBoxElement.keySet()){
+				if (kljuc.isSelected()){
+					seznamElementovZaIzbris.add(slovarCheckBoxElement.get(kljuc));
+				}
+			}
+			
+			PripravljalecPodatkov.izbrisiElemente(seznamElementovZaIzbris);
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -146,6 +237,10 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		}
 		else if (vir == mntmUstvariNovoZbirko){
 			NovaZbirkaWindow dialog = new NovaZbirkaWindow();
+			dialog.setVisible(true);
+		}
+		else if (vir == mntmNovElement){
+			NovElementWindow dialog = new NovElementWindow();
 			dialog.setVisible(true);
 		}
 		else if (vir == mntmOmogociUrejanje){
@@ -160,36 +255,15 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		}
 		else if (vir == buttonShraniSpremembe){
-			if (stanje == 0){
-				JDialog potrdiIzbris = new JDialog();
-				potrdiIzbris.setTitle("Opozorilo!");
-				//TODO pozeni PripravljalecPodatkov.izbrisiZbirke() v novem vlaknu, da dobimo seznam zbirk, ki se izpisejo v opozorilu
-				//ce smo v JDialog potrdili izbris, nadaljuj vlakno, drugace prekini
-				
-				JPanel contentPanel = new JPanel();
-				GridBagLayout gbl_contentPanel = new GridBagLayout();
-				gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
-				gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
-				gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-				gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-				contentPanel.setLayout(gbl_contentPanel);
-				potrdiIzbris.getContentPane().add(contentPanel);
-				
-				JLabel lbl = new JLabel("Ali ste prepričani, da želite odstraniti naslednje zbirke:");
-				GridBagConstraints gbc_lbl = new GridBagConstraints();
-				gbc_lbl.insets = new Insets(0, 0, 5, 5);
-				gbc_lbl.gridx = 0;
-				gbc_lbl.gridy = 0;
-				contentPanel.add(lbl, gbc_lbl);
-				
-				potrdiIzbris.pack();
-				potrdiIzbris.setVisible(true);
-			}
-			else {
-				PripravljalecPodatkov.izbrisiElemente();
-			}
-			
+			shraniUrejanje();
 			setupUI();
+		}
+		else if (vir == btnPotrdi){
+			PripravljalecPodatkov.izbrisiZbirke(seznamZbirkZaIzbris);
+			potrdiIzbris.dispose();
+		}
+		else if (vir == btnPreklici){
+			potrdiIzbris.dispose();
 		}
 		else if (slovarGumbov.keySet().contains(vir)){
 			for (JButton gumb : slovarGumbov.keySet()){
@@ -264,7 +338,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		if (urejanjeOmogoceno){
 			slovarCheckBoxZbirka = new HashMap<JCheckBox, String>();
 			
-			JLabel izbrisi = new JLabel("Izbrisi");
+			JLabel izbrisi = new JLabel("Izbriši");
 			GridBagConstraints gbc_izbrisi = new GridBagConstraints();
 			gbc_izbrisi.insets = new Insets(0, 0, 5, 5);
 			gbc_izbrisi.gridx = 1;
@@ -330,7 +404,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			int column = zbirka.get(0).size();
 			slovarCheckBoxElement = new HashMap<JCheckBox, List<String>>();
 			
-			JLabel izbrisi = new JLabel("Izbrisi");
+			JLabel izbrisi = new JLabel("Izbriši");
 			GridBagConstraints gbc_izbrisi = new GridBagConstraints();
 			gbc_izbrisi.insets = new Insets(0, 0, 5, 5);
 			gbc_izbrisi.gridx = column;
@@ -356,21 +430,6 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			gbc_buttonShraniSpremembe.gridy = rowCounter+1;
 			contentPane.add(buttonShraniSpremembe, gbc_buttonShraniSpremembe);
 		}
-	}
-
-
-	/**
-	 * @return slovarCheckBoxZbirka
-	 */
-	public static Map<JCheckBox, String> getSlovarCheckBoxZbirka() {
-		return slovarCheckBoxZbirka;
-	}
-
-	/**
-	 * @return slovarCheckBoxElement
-	 */
-	public static Map<JCheckBox, List<String>> getSlovarCheckBoxElement() {
-		return slovarCheckBoxElement;
 	}
 
 	/**
