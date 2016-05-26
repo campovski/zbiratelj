@@ -165,7 +165,7 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 				contentPanel.setLayout(gbl_contentPanel);
 				error.getContentPane().add(contentPanel);
 				
-				JLabel napis = new JLabel("<html>Zbirka z imenom '"+stolpci.get(0)+"' ze obstaja!<br>Prosim vnesi drugo ime.</html>");
+				JLabel napis = new JLabel("<html>Zbirka z imenom '"+stolpci.get(0)+"' že obstaja!<br>Prosim vnesi drugo ime.</html>");
 				GridBagConstraints gbc_napis = new GridBagConstraints();
 				gbc_napis.insets = new Insets(0, 0, 0, 5);
 				gbc_napis.gridx = 0;
