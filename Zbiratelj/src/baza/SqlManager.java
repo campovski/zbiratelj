@@ -4,6 +4,7 @@
 package baza;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author nina
@@ -18,7 +19,7 @@ public class SqlManager {
 		// dobi imeZbirke, ki jo odstrani iz SQL
 	}
 	
-	protected static void dodajElemente(String imeZbirke, List<List<String>> elementi){
+	protected static void dodajElemente(Map<String, List<List<String>>> elementi){
 		// dobi imeZbirke in seznam elementov (dolzine enake kot je prvaVrstica), ki ga poslje naprej v SQL (v pravo zbirko)
 	}
 	
