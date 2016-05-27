@@ -12,6 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import baza.PripravljalecPodatkov;
@@ -23,6 +25,7 @@ import baza.PripravljalecPodatkov;
 @SuppressWarnings("serial")
 public class NovElementWindow extends JDialog implements ActionListener{
 
+	private JPanel contentPanel;
 	private JButton btnNaprej;
 	private JButton btnIzhod;
 	private JComboBox<String> comboBox;
@@ -36,12 +39,17 @@ public class NovElementWindow extends JDialog implements ActionListener{
 	 * Create the dialog.
 	 */
 	public NovElementWindow() {
+		contentPanel = new JPanel();
+		JScrollPane scroll = new JScrollPane(contentPanel);
+		setResizable(false);
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		getContentPane().setLayout(gridBagLayout);
+		contentPanel.setLayout(gridBagLayout);
+		add(scroll);
 		
 		izberiZbirko();
 	}
@@ -53,7 +61,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_lblZbirka.anchor = GridBagConstraints.EAST;
 		gbc_lblZbirka.gridx = 0;
 		gbc_lblZbirka.gridy = 0;
-		getContentPane().add(lblZbirka, gbc_lblZbirka);
+		contentPanel.add(lblZbirka, gbc_lblZbirka);
 		
 		String[] seznam = new String[GlavnoOkno.slovarSS.keySet().size()];
 		int i = 0;
@@ -68,7 +76,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
 		gbc_comboBox.gridwidth = 2;
-		getContentPane().add(comboBox, gbc_comboBox);
+		contentPanel.add(comboBox, gbc_comboBox);
 		
 		btnNaprej = new JButton("Naprej");
 		btnNaprej.addActionListener(this);
@@ -76,20 +84,20 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_btnNaprej.insets = new Insets(0, 0, 0, 5);
 		gbc_btnNaprej.gridx = 1;
 		gbc_btnNaprej.gridy = 1;
-		getContentPane().add(btnNaprej, gbc_btnNaprej);
+		contentPanel.add(btnNaprej, gbc_btnNaprej);
 		
 		btnIzhod = new JButton("Izhod");
 		btnIzhod.addActionListener(this);
 		GridBagConstraints gbc_btnIzhod = new GridBagConstraints();
 		gbc_btnIzhod.gridx = 2;
 		gbc_btnIzhod.gridy = 1;
-		getContentPane().add(btnIzhod, gbc_btnIzhod);
+		contentPanel.add(btnIzhod, gbc_btnIzhod);
 
 		pack();
 	}
 	
 	private void vnesiElement() {
-		getContentPane().removeAll();
+		contentPanel.removeAll();
 
 		seznamTextField = new ArrayList<JTextField>();
 		izbranaZbirka = comboBox.getSelectedItem().toString();
@@ -101,7 +109,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_lblZbirka.anchor = GridBagConstraints.EAST;
 		gbc_lblZbirka.gridx = 0;
 		gbc_lblZbirka.gridy = 0;
-		getContentPane().add(lblZbirka, gbc_lblZbirka);
+		contentPanel.add(lblZbirka, gbc_lblZbirka);
 		
 		JLabel lblIzbranaZbirka = new JLabel(izbranaZbirka.toUpperCase());
 		GridBagConstraints gbc_lblIzbranaZbirka = new GridBagConstraints();
@@ -109,7 +117,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_lblIzbranaZbirka.gridx = 1;
 		gbc_lblIzbranaZbirka.gridy = 0;
 		gbc_lblIzbranaZbirka.gridwidth = 4;
-		getContentPane().add(lblIzbranaZbirka, gbc_lblIzbranaZbirka);
+		contentPanel.add(lblIzbranaZbirka, gbc_lblIzbranaZbirka);
 		
 		for (int row = 1; row <= stolpci.size(); row++){
 			JLabel lblStolpec = new JLabel(stolpci.get(row-1));
@@ -118,7 +126,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			gbc_lblStolpec.anchor = GridBagConstraints.EAST;
 			gbc_lblStolpec.gridx = 0;
 			gbc_lblStolpec.gridy = row;
-			getContentPane().add(lblStolpec, gbc_lblStolpec);
+			contentPanel.add(lblStolpec, gbc_lblStolpec);
 			
 			JTextField textField = new JTextField();
 			GridBagConstraints gbc_textField = new GridBagConstraints();
@@ -126,7 +134,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			gbc_textField.gridx = 1;
 			gbc_textField.gridy = row;
 			gbc_textField.gridwidth = 4;
-			getContentPane().add(textField, gbc_textField);
+			contentPanel.add(textField, gbc_textField);
 			seznamTextField.add(textField);
 		}
 		
@@ -136,7 +144,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_btnNazaj.gridx = 1;
 		gbc_btnNazaj.gridy = stolpci.size()+1;
 		btnNazaj.addActionListener(this);
-		getContentPane().add(btnNazaj, gbc_btnNazaj);
+		contentPanel.add(btnNazaj, gbc_btnNazaj);
 		
 		btnDodaj = new JButton("Dodaj");
 		btnDodaj.addActionListener(this);
@@ -144,7 +152,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_btnDodaj.gridx = 2;
 		gbc_btnDodaj.gridy = stolpci.size()+1;
 		btnDodaj.addActionListener(this);
-		getContentPane().add(btnDodaj, gbc_btnDodaj);
+		contentPanel.add(btnDodaj, gbc_btnDodaj);
 		
 		btnShrani = new JButton("Shrani");
 		btnShrani.addActionListener(this);
@@ -152,14 +160,14 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_btnShrani.gridx = 3;
 		gbc_btnShrani.gridy = stolpci.size()+1;
 		btnShrani.addActionListener(this);
-		getContentPane().add(btnShrani, gbc_btnShrani);
+		contentPanel.add(btnShrani, gbc_btnShrani);
 		
 		btnIzhod = new JButton("Izhod");
 		btnIzhod.addActionListener(this);
 		GridBagConstraints gbc_btnIzhod = new GridBagConstraints();
 		gbc_btnIzhod.gridx = 4;
 		gbc_btnIzhod.gridy = stolpci.size()+1;
-		getContentPane().add(btnIzhod, gbc_btnIzhod);
+		contentPanel.add(btnIzhod, gbc_btnIzhod);
 		
 		pack();
 	}
@@ -183,7 +191,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			dispose();
 		}
 		else if (vir == btnNazaj){
-			getContentPane().removeAll();
+			contentPanel.removeAll();
 			izberiZbirko();
 		}
 		else if (vir == btnDodaj){

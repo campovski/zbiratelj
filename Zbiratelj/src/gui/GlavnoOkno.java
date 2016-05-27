@@ -7,6 +7,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import baza.PripravljalecPodatkov;
@@ -40,9 +41,6 @@ import java.awt.GridBagConstraints;
  * stanje = 0: mojeZbirke
  * stanje = 1: narisiZbirko
  */
-
-// TODO ScrollBar mojeZbirke in narisiZbirko
-
 @SuppressWarnings("serial")
 public class GlavnoOkno extends JFrame implements ActionListener{
 	
@@ -96,6 +94,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	 */
 	public GlavnoOkno() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -146,7 +145,6 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		mntmKonajUrejanje.addActionListener(this);
 		
 		contentPane = new JPanel();
-		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 0};
 		gbl_contentPane.rowHeights = new int[]{0, 0};
@@ -154,6 +152,8 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		gbl_contentPane.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
+		JScrollPane scroll = new JScrollPane(contentPane);
+		add(scroll);
 		stanje = 0;
 		setupUI();
 		pack();

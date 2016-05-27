@@ -3,6 +3,8 @@ package gui;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 
@@ -26,6 +28,7 @@ import baza.PripravljalecPodatkov;
  */
 @SuppressWarnings("serial")
 public class NovaZbirkaWindow extends JDialog implements ActionListener{
+	
 	private List<JTextField> arrTextField;
 	private List<String> stolpci;
 	private JButton btnShrani;
@@ -43,13 +46,16 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		arrTextField = new ArrayList<JTextField>();
 		
 		contentPanel = new JPanel();
+		JScrollPane scroll = new JScrollPane(contentPanel);
+		setResizable(false);
+		
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
 		gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
-		getContentPane().add(contentPanel);
+		add(scroll);
 		
 		JLabel lblImeZbirke = new JLabel("Ime zbirke");
 		GridBagConstraints gbc_lblImeZbirke = new GridBagConstraints();
