@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import baza.PripravljalecPodatkov;
 
 /**
  * @author campovski
@@ -162,7 +161,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		btnShrani.addActionListener(this);
 		contentPanel.add(btnShrani, gbc_btnShrani);
 		
-		btnIzhod = new JButton("Izhod");
+		btnIzhod = new JButton("Prekliči");
 		btnIzhod.addActionListener(this);
 		GridBagConstraints gbc_btnIzhod = new GridBagConstraints();
 		gbc_btnIzhod.gridx = 4;
@@ -177,7 +176,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		for (JTextField polje : seznamTextField){
 			element.add(polje.getText());
 		}
-		PripravljalecPodatkov.dodajElement(izbranaZbirka, element);
+		GlavnoOkno.podatki.dodajElement(izbranaZbirka, element);
 	}
 
 	@Override
@@ -187,7 +186,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			vnesiElement();
 		}
 		else if (vir == btnIzhod){
-			PripravljalecPodatkov.dodajElemente();
+			GlavnoOkno.podatki.izprazniDodajanjeElementov();
 			dispose();
 		}
 		else if (vir == btnNazaj){
@@ -201,7 +200,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		else if (vir == btnShrani){
 			// ERROR printa 2x
 			dodajVZbirko();
-			PripravljalecPodatkov.dodajElemente();
+			GlavnoOkno.podatki.dodajElemente();
 			dispose();
 		}
 	}

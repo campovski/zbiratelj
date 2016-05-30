@@ -28,6 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+import javax.swing.JSeparator;
 
 
 
@@ -47,12 +48,12 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	private JPanel contentPane;
 	
 	private JMenuItem mntmMojeZbirke;
-	private JMenu mnDodaj;
 	private JMenuItem mntmUstvariNovoZbirko;
 	private JMenuItem mntmOmogociUrejanje;
 	private JMenuItem mntmKonajUrejanje;
 	private JMenuItem mntmIzhod;
-	private JMenu mnUredi;
+	private JMenuItem mntmUvoziCsv;
+	private JMenuItem mntmIzvoziCsv;
 	private JMenuItem mntmNovElement;
 	
 	private Map<JButton, String> slovarGumbov;
@@ -65,13 +66,14 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	private int stanje;
 
 	private JButton btnPotrdi;
-
 	private JButton btnPreklici;
-
 	private ArrayList<String> seznamZbirkZaIzbris;
-
 	private JDialog potrdiIzbris;
 	private static String zbirkaZaRisanje = null;
+	private JSeparator separator;
+	private JSeparator separator_1;
+
+	static PripravljalecPodatkov podatki;
 
 	/**
 	 * Zacni program.
@@ -81,6 +83,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			public void run() {
 				try {
 					GlavnoOkno frame = new GlavnoOkno();
+					frame.setLayout(new GridBagLayout());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -108,16 +111,30 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		mntmMojeZbirke.setAccelerator(keyStrokeMojeZbirke);
 		mnMeni.add(mntmMojeZbirke);
 		
+		JMenu mnCsv = new JMenu("CSV");
+		mnMeni.add(mnCsv);
+		
+		mntmUvoziCsv = new JMenuItem("Uvozi");
+		mntmUvoziCsv.addActionListener(this);
+		mnCsv.add(mntmUvoziCsv);
+		
+		mntmIzvoziCsv = new JMenuItem("Izvozi");
+		mntmIzvoziCsv.addActionListener(this);
+		mnCsv.add(mntmIzvoziCsv);
+		
 		mntmIzhod = new JMenuItem("Izhod");
 		mntmIzhod.addActionListener(this);
 		KeyStroke keyStrokeIzhod = KeyStroke.getKeyStroke("control X");
+		
+		separator = new JSeparator();
+		mnMeni.add(separator);
 		mntmIzhod.setAccelerator(keyStrokeIzhod);
 		mnMeni.add(mntmIzhod);
 		
-		mnUredi = new JMenu("Uredi");
+		JMenu mnUredi = new JMenu("Uredi");
 		menuBar.add(mnUredi);
 		
-		mnDodaj = new JMenu("Dodaj...");
+		JMenu mnDodaj = new JMenu("Dodaj...");
 		mnUredi.add(mnDodaj);
 		
 		mntmUstvariNovoZbirko = new JMenuItem("Nova zbirka");
@@ -131,6 +148,9 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		KeyStroke keyStrokeNovElement = KeyStroke.getKeyStroke("control N");
 		mntmNovElement.setAccelerator(keyStrokeNovElement);
 		mntmNovElement.addActionListener(this);
+		
+		separator_1 = new JSeparator();
+		mnUredi.add(separator_1);
 		
 		mntmOmogociUrejanje = new JMenuItem("Omogoči urejanje");
 		mnUredi.add(mntmOmogociUrejanje);
@@ -153,7 +173,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		contentPane.setLayout(gbl_contentPane);
 		
 		JScrollPane scroll = new JScrollPane(contentPane);
-		add(scroll);
+		getContentPane().add(scroll);
 		stanje = 0;
 		setupUI();
 		pack();
@@ -223,7 +243,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 				}
 			}
 			
-			PripravljalecPodatkov.izbrisiElemente(seznamElementovZaIzbris);
+			podatki.izbrisiElemente(seznamElementovZaIzbris);
 		}
 	}
 
@@ -234,6 +254,16 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			stanje = 0;
 			zbirkaZaRisanje = null;
 			setupUI();
+		}
+		else if (vir == mntmUvoziCsv){
+			UvoziCsvWindow dialog = new UvoziCsvWindow();
+			dialog.setVisible(true);
+		}
+		else if (vir == mntmIzvoziCsv){
+			
+		}
+		else if (vir == mntmIzhod){
+			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		}
 		else if (vir == mntmUstvariNovoZbirko){
 			NovaZbirkaWindow dialog = new NovaZbirkaWindow();
@@ -251,15 +281,12 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			urejanjeOmogoceno = false;
 			setupUI();
 		}
-		else if (vir == mntmIzhod){
-			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		}
 		else if (vir == buttonShraniSpremembe){
 			shraniUrejanje();
 			setupUI();
 		}
 		else if (vir == btnPotrdi){
-			PripravljalecPodatkov.izbrisiZbirke(seznamZbirkZaIzbris);
+			podatki.izbrisiZbirke(seznamZbirkZaIzbris);
 			potrdiIzbris.dispose();
 		}
 		else if (vir == btnPreklici){
@@ -308,7 +335,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	 * Ce je omogoceno urejanje, dodamo se JCheckBox-e, ki omogocajo izbiro zbirk za izbris.
 	 */
 	public void mojeZbirke(){
-		PripravljalecPodatkov podatki = new PripravljalecPodatkov();
+		podatki = new PripravljalecPodatkov();
 		slovarSS = podatki.getSlovar();
 		List<String> seznamZbirk = new ArrayList<String>(slovarSS.keySet());
 		Collections.sort(seznamZbirk);
@@ -431,7 +458,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			contentPane.add(buttonShraniSpremembe, gbc_buttonShraniSpremembe);
 		}
 	}
-
+	
 	/**
 	 * @return zbirkaZaRisanje
 	 */

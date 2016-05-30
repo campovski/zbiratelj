@@ -16,14 +16,15 @@ import gui.GlavnoOkno;
  */
 public class PripravljalecPodatkov {
 	
-	private static Map<String, List<List<String>>> slovar;
-	private static Map<String, List<List<String>>> elementiZaDodajanje = new HashMap<String, List<List<String>>>();
+	private Map<String, List<List<String>>> slovar;
+	private Map<String, List<List<String>>> elementiZaDodajanje = new HashMap<String, List<List<String>>>();
 
 	/**
 	 * Naredi testni slovar. Mogoce v prihodnosti se kaj drugega...
 	 */
 	public PripravljalecPodatkov(){
 		slovar = new HashMap<String, List<List<String>>>();
+		
 		List<List<String>> seznamSeznamovFilmi = new ArrayList<List<String>>();
 		List<String> seznamFilmiStolpci = new ArrayList<String>();
 		seznamFilmiStolpci.add("Naslov");
@@ -66,7 +67,7 @@ public class PripravljalecPodatkov {
 	 * Metoda dobljen seznam doda v slovar, pri cemer je prvi element stolpcev
 	 * ime zbirke, ostali pa so imena stolpcev. Pred tem zbirko se doda v bazo.
 	 */
-	public static void dodajZbirko(List<String> stolpci){
+	public void dodajZbirko(List<String> stolpci){
 		List<List<String>> seznamSeznamov = new ArrayList<List<String>>();
 		List<String> prvaVrstica = new ArrayList<String>();
 		for (int i = 1; i < stolpci.size(); i++){
@@ -83,12 +84,12 @@ public class PripravljalecPodatkov {
 	 * Metoda se pozene v novem vlaknu, ki po branju JCheckBox-ov pocaka, ali
 	 * bo uporabnik potrdil izbris. Ce ga, nadaljujemo, drugace se vlakno ustavi.
 	 */
-	public static void izbrisiZbirke(List<String> zbirke){
+	public void izbrisiZbirke(List<String> zbirke){
 		SqlManager.odstraniZbirke(zbirke);
 		System.out.println(zbirke);
 	}
 	
-	public static void dodajElement(String zbirka, List<String> element){
+	public void dodajElement(String zbirka, List<String> element){
 		if (elementiZaDodajanje.containsKey(zbirka)){
 			if (!elementiZaDodajanje.get(zbirka).contains(element)){
 				elementiZaDodajanje.get(zbirka).add(element);
@@ -102,11 +103,20 @@ public class PripravljalecPodatkov {
 		System.out.println(elementiZaDodajanje);
 	}
 	
-	public static void dodajElemente(){
+	public void dodajElemente(){
 		if (!elementiZaDodajanje.isEmpty()){
+			for (String imeZbirke : elementiZaDodajanje.keySet()){
+				if (slovar.containsKey(imeZbirke)){
+					slovar.get(imeZbirke).addAll(elementiZaDodajanje.get(imeZbirke));
+				}
+				else {
+					slovar.put(imeZbirke, elementiZaDodajanje.get(imeZbirke));
+				}
+			}
+			
 			SqlManager.dodajElemente(elementiZaDodajanje);
 			System.out.println("To so dodani elementi: " + elementiZaDodajanje);
-			elementiZaDodajanje.clear();
+			izprazniDodajanjeElementov();
 		}
 	}
 	
@@ -115,7 +125,7 @@ public class PripravljalecPodatkov {
 	 * niso tako nevarni za izbris, kakor zbirke, tu ni potrebno preverjati, ali res zelimo
 	 * izbris ali ne.
 	 */
-	public static void izbrisiElemente(List<List<String>> elementi){
+	public void izbrisiElemente(List<List<String>> elementi){
 		SqlManager.odstraniElemente(GlavnoOkno.getZbirkaZaRisanje(), elementi);
 		System.out.println(elementi);
 	}
@@ -125,5 +135,9 @@ public class PripravljalecPodatkov {
 	 */
 	public Map<String, List<List<String>>> getSlovar() {
 		return slovar;
+	}
+	
+	public void izprazniDodajanjeElementov(){
+		elementiZaDodajanje.clear();
 	}
 }
