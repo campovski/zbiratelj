@@ -31,11 +31,21 @@ public class CsvManager {
 	}
 	
 	public void narediCsv(String naslovDirektorija, List<String> zbirke) throws IOException{
+		String osName = System.getProperty("os.name");
+		
 		PripravljalecPodatkov pripravljalec = new PripravljalecPodatkov();
 		Map<String, List<List<String>>> slovar = pripravljalec.getSlovar();
 		
 		for (String zbirka : zbirke){
-			FileWriter writer = new FileWriter(naslovDirektorija+"/"+zbirka+".csv");
+			String fileName = null;
+			if (osName.equals("Linux") || osName.equals("Mac OS X")){
+				fileName = naslovDirektorija+"/"+zbirka+".csv";
+			}
+			else if (osName.equals("Windows")){
+				fileName = naslovDirektorija+"\\"+zbirka+".csv";
+			}
+			
+			FileWriter writer = new FileWriter(fileName);
 			List<List<String>> seznamElementov = slovar.get(zbirka);
 			for (List<String> element : seznamElementov){
 				for (int i = 0; i < element.size(); i++){
