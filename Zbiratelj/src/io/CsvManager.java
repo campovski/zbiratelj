@@ -45,6 +45,8 @@ public class CsvManager {
 	 * @throws IOException
 	 */
 	public void narediCsv(String naslovDirektorija, List<String> zbirke) throws IOException{
+		// TODO preveri, ali morda ze obstaja CSV, ki ga hoces naredit!
+		
 		String osName = System.getProperty("os.name");
 		
 		PripravljalecPodatkov pripravljalec = new PripravljalecPodatkov();
