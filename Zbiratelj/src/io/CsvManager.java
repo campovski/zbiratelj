@@ -4,11 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class CsvImporter {
+import baza.PripravljalecPodatkov;
+
+public class CsvManager {
 	private ArrayList<List<String>> datoteka;
 
 	@SuppressWarnings("resource")
@@ -23,6 +27,27 @@ public class CsvImporter {
 				vrstica2.add(beseda);
 			}
 			datoteka.add(vrstica2);
+		}
+	}
+	
+	public void narediCsv(String naslovDirektorija, List<String> zbirke) throws IOException{
+		PripravljalecPodatkov pripravljalec = new PripravljalecPodatkov();
+		Map<String, List<List<String>>> slovar = pripravljalec.getSlovar();
+		
+		for (String zbirka : zbirke){
+			FileWriter writer = new FileWriter(naslovDirektorija+"/"+zbirka+".csv");
+			List<List<String>> seznamElementov = slovar.get(zbirka);
+			for (List<String> element : seznamElementov){
+				for (int i = 0; i < element.size(); i++){
+					writer.append(element.get(i));
+					if (i < element.size() - 1){
+						writer.append(",");
+					}
+				}
+				writer.append("\n");
+			}
+			writer.flush();
+			writer.close();
 		}
 	}
 

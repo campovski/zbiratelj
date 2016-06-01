@@ -28,7 +28,7 @@ import java.awt.Insets;
 import javax.swing.JTextField;
 
 import baza.PripravljalecPodatkov;
-import io.CsvImporter;
+import io.CsvManager;
 
 /**
  * @author nina
@@ -43,7 +43,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	private JTextField textFieldDatoteka;
 	private File datoteka;
 	private final JPanel contentPanel;
-	private CsvImporter csv;
+	private CsvManager csv;
 	private JDialog error;
 	private JButton btnPreklici;
 	private JButton btnZamenjaj;
@@ -66,7 +66,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		gbc_lblImeZbirke.insets = new Insets(0, 0, 5, 5);
 		gbc_lblImeZbirke.gridx = 0;
 		gbc_lblImeZbirke.gridy = 0;
-		gbc_lblImeZbirke.weighty = 0;
+		gbc_lblImeZbirke.weighty = 1;
 		contentPanel.add(lblImeZbirke, gbc_lblImeZbirke);
 		
 		textField = new JTextField();
@@ -84,7 +84,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		gbc_lblDatoteka.insets = new Insets(0, 0, 5, 5);
 		gbc_lblDatoteka.gridx = 0;
 		gbc_lblDatoteka.gridy = 1;
-		gbc_lblDatoteka.weighty = 0;
+		gbc_lblDatoteka.weighty = 1;
 		contentPanel.add(lblDatoteka, gbc_lblDatoteka);
 		
 		textFieldDatoteka = new JTextField();
@@ -224,7 +224,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		Object vir = arg0.getSource();
 		if (vir == btnOdpri){
 			if (datoteka != null){
-				csv = new CsvImporter();
+				csv = new CsvManager();
 				try {
 					csv.preberiCsv(datoteka);
 				} catch (FileNotFoundException e) {

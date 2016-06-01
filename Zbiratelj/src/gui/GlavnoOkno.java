@@ -44,6 +44,7 @@ import javax.swing.JSeparator;
  */
 @SuppressWarnings("serial")
 public class GlavnoOkno extends JFrame implements ActionListener{
+	//TODO alwaysOnTop
 	
 	private JPanel contentPane;
 	
@@ -257,10 +258,12 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		}
 		else if (vir == mntmUvoziCsv){
 			UvoziCsvWindow dialog = new UvoziCsvWindow();
+			dialog.setAlwaysOnTop(true);
 			dialog.setVisible(true);
 		}
 		else if (vir == mntmIzvoziCsv){
-			
+			IzvoziCsvWindow dialog = new IzvoziCsvWindow();
+			dialog.setVisible(true);
 		}
 		else if (vir == mntmIzhod){
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
@@ -374,7 +377,6 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 			
 			for (rowCounter = 1; rowCounter <= seznamZbirk.size(); rowCounter++){
 				JCheckBox box = new JCheckBox();
-				box.addActionListener(this);
 				GridBagConstraints gbc_box = new GridBagConstraints();
 				gbc_box.insets = new Insets(0, 0, 5, 5);
 				gbc_box.gridx = 1;
