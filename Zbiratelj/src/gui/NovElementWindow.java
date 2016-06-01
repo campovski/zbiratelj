@@ -53,6 +53,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		izberiZbirko();
 	}
 	
+	/**
+	 * Metoda, ki nas vprasa, v katero zbirko zelimo dodati element.
+	 */
 	private void izberiZbirko() {
 		JLabel lblZbirka = new JLabel("Zbirka");
 		GridBagConstraints gbc_lblZbirka = new GridBagConstraints();
@@ -95,6 +98,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		pack();
 	}
 	
+	/**
+	 * Ko smo izbrali zbirko, lahko sedaj vnesemo element. Ta metoda nam to omogoci.
+	 */
 	private void vnesiElement() {
 		contentPanel.removeAll();
 
@@ -171,6 +177,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		pack();
 	}
 	
+	/**
+	 * Metoda, ki doda element v vrsto za dodajanje (slovar PripravljalecPodatkov.elementiZaDodajanje).
+	 */
 	private void dodajVZbirko(){
 		List<String> element = new ArrayList<String>();
 		for (JTextField polje : seznamTextField){

@@ -33,7 +33,7 @@ public class IzvoziCsvWindow extends JDialog implements ActionListener{
 	private JButton izvozi;
 
 	/**
-	 * Create the dialog.
+	 * Naredi JDialog, v katerem izberemo s pomocjo JCheckBox-ov zbirke, ki jih zelimo izvoziti.
 	 */
 	public IzvoziCsvWindow() {
 		contentPanel = new JPanel();

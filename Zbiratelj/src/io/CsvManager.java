@@ -15,10 +15,16 @@ import baza.PripravljalecPodatkov;
 public class CsvManager {
 	private ArrayList<List<String>> datoteka;
 
-	@SuppressWarnings("resource")
-	public void preberiCsv(File datoteka2) throws IOException, FileNotFoundException{
+	/**
+	 * Prebere izbran CSV v seznam datoteka.
+	 * @param f
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public void preberiCsv(File f) throws IOException, FileNotFoundException{
 		datoteka = new ArrayList<List<String>>();
-		BufferedReader reader = new BufferedReader(new FileReader(datoteka2));
+		BufferedReader reader = new BufferedReader(new FileReader(f));
+		
 		String vrstica;
 		while ((vrstica = reader.readLine()) != null){
 			String[] vrstica1 = vrstica.split(",");
@@ -28,8 +34,16 @@ public class CsvManager {
 			}
 			datoteka.add(vrstica2);
 		}
+		
+		reader.close();
 	}
 	
+	/**
+	 * Naredi CSV datoteko izbrane zbirke v izbran direktorij. 
+	 * @param naslovDirektorija
+	 * @param zbirke
+	 * @throws IOException
+	 */
 	public void narediCsv(String naslovDirektorija, List<String> zbirke) throws IOException{
 		String osName = System.getProperty("os.name");
 		
@@ -62,7 +76,7 @@ public class CsvManager {
 	}
 
 	/**
-	 * @return the datoteka
+	 * @return datoteka
 	 */
 	public ArrayList<List<String>> getDatoteka() {
 		return datoteka;

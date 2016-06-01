@@ -180,6 +180,9 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 		pack();
 	}
 	
+	/**
+	 * Metoda, ki nas vprasa, ali smo prepricani, da zelimo izbrisati izbrane zbirke.
+	 */
 	private void shraniUrejanje(){
 		if (stanje == 0){
 			seznamZbirkZaIzbris = new ArrayList<String>();
@@ -399,6 +402,7 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	 * Metoda narise zbirko, ki je shranjena v zbirkaZaRisanje. Ce je omogoceno urejanje, doda se JCheckBoxe.
 	 */
 	public void narisiZbirko(){
+		// TODO ENHANCEMENT Narisi zbirko s pomocjo JTable.
 		assert zbirkaZaRisanje != null;
 		
 		List<List<String>> zbirka = slovarSS.get(zbirkaZaRisanje);

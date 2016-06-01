@@ -50,6 +50,9 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	private String vnesenaZbirka;
 	private PripravljalecPodatkov pripravljalec = GlavnoOkno.podatki;
 	
+	/**
+	 * Odpre okno, ki omogoca izbiro datoteke za uvoz in imena zbirke.
+	 */
 	public UvoziCsvWindow() {
 		contentPanel = new JPanel();
 		add(contentPanel);
@@ -128,6 +131,10 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		pack();
 	}
 	
+	/**
+	 * Narise zbirko na dno okna.
+	 * @param zbirka
+	 */
 	private void narisiZbirko(List<List<String>> zbirka){
 		JScrollPane scroll = new JScrollPane(contentPanel);
 		
@@ -150,6 +157,10 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		getContentPane().add(scroll);
 	}
 	
+	/**
+	 * Preveri, ali morda zbirka ze obstaja. Ce da, nam ponudi moznost preklica dodajanja
+	 * ali pa zamenjave stare zbirke z novo.
+	 */
 	private void shraniZbirko(){
 		vnesenaZbirka = textField.getText();
 		if (pripravljalec.getSlovar().containsKey(vnesenaZbirka)){
@@ -197,6 +208,10 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Potrdi shranjevanje. Ce je potreben prepis zbirke, staro najprej izbrisemo.
+	 * @param izbris
+	 */
 	private void potrdiShranjevanje(boolean izbris){
 		ArrayList<List<String>> seznamSeznamovVZbirki = csv.getDatoteka();
 		

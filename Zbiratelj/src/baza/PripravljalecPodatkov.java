@@ -18,14 +18,22 @@ public class PripravljalecPodatkov {
 	
 	private Map<String, List<List<String>>> slovar;
 	private Map<String, List<List<String>>> elementiZaDodajanje = new HashMap<String, List<List<String>>>();
+	private SqlManager sql;
 
 	/**
-	 * Naredi testni slovar. Mogoce v prihodnosti se kaj drugega...
+	 * Naredi slovar, ki vsebuje zbirke za kljuce, in pripadajoce zbirke za vrednosti.
 	 */
 	public PripravljalecPodatkov(){
 		slovar = new HashMap<String, List<List<String>>>();
 		
-		List<List<String>> seznamSeznamovFilmi = new ArrayList<List<String>>();
+		sql = new SqlManager("testuser", "password");
+		try {
+			slovar = sql.getBaza();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		/*List<List<String>> seznamSeznamovFilmi = new ArrayList<List<String>>();
 		List<String> seznamFilmiStolpci = new ArrayList<String>();
 		seznamFilmiStolpci.add("Naslov");
 		seznamFilmiStolpci.add("Leto");
@@ -59,7 +67,7 @@ public class PripravljalecPodatkov {
 		
 		slovar.put("Pivo", seznamSeznamovFilmi);
 		slovar.put("Filmi", seznamSeznamovFilmi);
-		slovar.put("Filmski plakati", seznamSeznamovFilmskiPlakati);
+		slovar.put("Filmski plakati", seznamSeznamovFilmskiPlakati);*/
 	}
 	
 	/**
@@ -75,7 +83,7 @@ public class PripravljalecPodatkov {
 		}
 		seznamSeznamov.add(prvaVrstica);
 		
-		SqlManager.dodajZbirko(stolpci);
+		sql.dodajZbirko(stolpci);
 		
 		slovar.put(stolpci.get(0), seznamSeznamov);
 	}
@@ -85,10 +93,15 @@ public class PripravljalecPodatkov {
 	 * bo uporabnik potrdil izbris. Ce ga, nadaljujemo, drugace se vlakno ustavi.
 	 */
 	public void izbrisiZbirke(List<String> zbirke){
-		SqlManager.odstraniZbirke(zbirke);
+		sql.odstraniZbirke(zbirke);
 		System.out.println(zbirke);
 	}
 	
+	/**
+	 * Metoda, ki v slovarju elementiZaDodajanje pod kljuc zbirka doda element. 
+	 * @param zbirka
+	 * @param element
+	 */
 	public void dodajElement(String zbirka, List<String> element){
 		if (elementiZaDodajanje.containsKey(zbirka)){
 			if (!elementiZaDodajanje.get(zbirka).contains(element)){
@@ -103,6 +116,9 @@ public class PripravljalecPodatkov {
 		System.out.println(elementiZaDodajanje);
 	}
 	
+	/**
+	 * Metoda, ki potrdi dodajanje elementov, ki cakajo na dodajanje v zbirko.
+	 */
 	public void dodajElemente(){
 		if (!elementiZaDodajanje.isEmpty()){
 			for (String imeZbirke : elementiZaDodajanje.keySet()){
@@ -114,7 +130,7 @@ public class PripravljalecPodatkov {
 				}
 			}
 			
-			SqlManager.dodajElemente(elementiZaDodajanje);
+			sql.dodajElemente(elementiZaDodajanje);
 			System.out.println("To so dodani elementi: " + elementiZaDodajanje);
 			izprazniDodajanjeElementov();
 		}
@@ -126,10 +142,18 @@ public class PripravljalecPodatkov {
 	 * izbris ali ne.
 	 */
 	public void izbrisiElemente(List<List<String>> elementi){
-		SqlManager.odstraniElemente(GlavnoOkno.getZbirkaZaRisanje(), elementi);
+		sql.odstraniElemente(GlavnoOkno.getZbirkaZaRisanje(), elementi);
 		System.out.println(elementi);
 	}
 
+	/**
+	 * Metoda, ki izprazni slovar, v katerem so elementi, ki cakajo na dodajanje. To metodo
+	 * klicemo, ko zelimo elementi poslati v bazo, ali ko zelimo prekiniti dodajanje.
+	 */
+	public void izprazniDodajanjeElementov(){
+		elementiZaDodajanje.clear();
+	}
+	
 	/**
 	 * @return slovar
 	 */
@@ -137,7 +161,4 @@ public class PripravljalecPodatkov {
 		return slovar;
 	}
 	
-	public void izprazniDodajanjeElementov(){
-		elementiZaDodajanje.clear();
-	}
 }
