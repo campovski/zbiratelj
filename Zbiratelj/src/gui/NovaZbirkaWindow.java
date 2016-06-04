@@ -18,6 +18,8 @@ import java.util.List;
 
 import javax.swing.JTextField;
 
+import baza.SqlManager;
+
 /**
  * @author campovski
  * Razred poskrbi za izris okna, v katerem lahko vnesemo podatke o zbirki,
@@ -32,10 +34,11 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	private JButton btnShrani;
 	private JPanel contentPanel;
 	private int rowCounter = 1;
-	private JButton button;
 	private JButton btnOk;
 	private JDialog error;
 	private JPanel stolpciPanel;
+	private JButton plusButton;
+	private JTextField textFieldZbirka;
 
 
 	/**
@@ -66,14 +69,13 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		gbc_lblImeZbirke.weighty = 0;
 		contentPanel.add(lblImeZbirke, gbc_lblImeZbirke);
 		
-		JTextField textField = new JTextField();
+		textFieldZbirka = new JTextField();
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.insets = new Insets(0, 0, 5, 0);
 		gbc_textField.gridx = 1;
 		gbc_textField.gridy = 0;
-		contentPanel.add(textField, gbc_textField);
-		textField.setColumns(10);
-		arrTextField.add(textField);
+		contentPanel.add(textFieldZbirka, gbc_textField);
+		textFieldZbirka.setColumns(10);
 		
 		stolpciPanel = new JPanel();
 		stolpciPanel.setLayout(new GridBagLayout());
@@ -101,13 +103,13 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		stolpciPanel.add(textField_1, gbc_textField1);
 		arrTextField.add(textField_1);
 		
-		button = new JButton("+");
-		button.addActionListener(this);
+		plusButton = new JButton("+");
+		plusButton.addActionListener(this);
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.insets = new Insets(0, 0, 5, 5);
 		gbc_button.gridx = 0;
 		gbc_button.gridy = 2;
-		contentPanel.add(button, gbc_button);
+		contentPanel.add(plusButton, gbc_button);
 		
 		btnShrani = new JButton("Shrani");
 		GridBagConstraints gbc_btnShrani = new GridBagConstraints();
@@ -123,7 +125,7 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object vir = e.getSource();
-		if (vir == button){
+		if (vir == plusButton){
 			rowCounter++;
 			
 			JLabel lblStolpec = new JLabel("Stolpec "+rowCounter);
@@ -144,48 +146,50 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			contentPanel.updateUI();
 			pack();
 		}
-		else if (vir == btnShrani){
+		else if (vir == btnShrani && !textFieldZbirka.getText().isEmpty()){
 			stolpci = new ArrayList<String>();
 			for (JTextField polje : arrTextField){
-				stolpci.add(polje.getText());
+				String vnos = polje.getText();
+				if (! vnos.isEmpty()){
+					stolpci.add(polje.getText());
+				}
 			}
 			
-			if (!stolpci.get(0).isEmpty() && !stolpci.get(1).isEmpty()){		
-				if (GlavnoOkno.slovarSS.keySet().contains(stolpci.get(0))){
-					error = new JDialog();
-					error.setTitle("Napaka");
-					
-					JPanel contentPanel = new JPanel();
-					GridBagLayout gbl_contentPanel = new GridBagLayout();
-					gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
-					gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
-					gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-					gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-					contentPanel.setLayout(gbl_contentPanel);
-					error.getContentPane().add(contentPanel);
-					
-					JLabel napis = new JLabel("<html>Zbirka z imenom '"+stolpci.get(0)+"' že obstaja!<br>Prosim vnesi drugo ime.</html>");
-					GridBagConstraints gbc_napis = new GridBagConstraints();
-					gbc_napis.insets = new Insets(0, 0, 0, 5);
-					gbc_napis.gridx = 0;
-					gbc_napis.gridy = 0;
-					contentPanel.add(napis, gbc_napis);
-					
-					btnOk = new JButton("OK");
-					btnOk.addActionListener(this);
-					GridBagConstraints gbc_ok = new GridBagConstraints();
-					gbc_ok.insets = new Insets(0, 0, 0, 5);
-					gbc_ok.gridx = 0;
-					gbc_ok.gridy = 1;
-					contentPanel.add(btnOk, gbc_ok);
-	
-					error.pack();
-					error.setVisible(true);
-				}
-				else {
-					GlavnoOkno.podatki.dodajZbirko(stolpci);
-					dispose();
-				}
+			if (SqlManager.beriBazo().contains(textFieldZbirka.getText())){
+				error = new JDialog();
+				error.setTitle("Napaka");
+				
+				JPanel contentPanel = new JPanel();
+				GridBagLayout gbl_contentPanel = new GridBagLayout();
+				gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
+				gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+				gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+				gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+				contentPanel.setLayout(gbl_contentPanel);
+				error.getContentPane().add(contentPanel);
+				
+				JLabel napis = new JLabel("<html>Zbirka z imenom '"+textFieldZbirka.getText()+"' že obstaja!<br>Prosim vnesi drugo ime.</html>");
+				GridBagConstraints gbc_napis = new GridBagConstraints();
+				gbc_napis.insets = new Insets(0, 0, 0, 5);
+				gbc_napis.gridx = 0;
+				gbc_napis.gridy = 0;
+				contentPanel.add(napis, gbc_napis);
+				
+				btnOk = new JButton("OK");
+				btnOk.addActionListener(this);
+				GridBagConstraints gbc_ok = new GridBagConstraints();
+				gbc_ok.insets = new Insets(0, 0, 0, 5);
+				gbc_ok.gridx = 0;
+				gbc_ok.gridy = 1;
+				contentPanel.add(btnOk, gbc_ok);
+
+				error.pack();
+				error.setVisible(true);
+			}
+			else {
+				// TODO obravnavaj razlicne returne
+				System.out.println(SqlManager.dodajZbirko(textFieldZbirka.getText(), stolpci));
+				dispose();
 			}
 		}
 		else if (vir == btnOk){
