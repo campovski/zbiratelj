@@ -2,8 +2,9 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import java.awt.GridBagLayout;
@@ -15,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
+import baza.SqlManager;
 
 
 /**
@@ -30,9 +33,8 @@ public class NovElementWindow extends JDialog implements ActionListener{
 	private JComboBox<String> comboBox;
 	private JButton btnNazaj;
 	private JButton btnDodaj;
-	private JButton btnShrani;
 	private String izbranaZbirka;
-	private List<JTextField> seznamTextField;
+	private Map<String, JTextField> slovarTextField;
 
 	/**
 	 * Create the dialog.
@@ -65,9 +67,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_lblZbirka.gridy = 0;
 		contentPanel.add(lblZbirka, gbc_lblZbirka);
 		
-		String[] seznam = new String[GlavnoOkno.slovarSS.keySet().size()];
+		String[] seznam = new String[SqlManager.beriBazo().size()];
 		int i = 0;
-		for (String zbirka : GlavnoOkno.slovarSS.keySet()){
+		for (String zbirka : SqlManager.beriBazo()){
 			seznam[i] = zbirka;
 			i++;
 		}
@@ -104,9 +106,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 	private void vnesiElement() {
 		contentPanel.removeAll();
 
-		seznamTextField = new ArrayList<JTextField>();
+		slovarTextField = new HashMap<String, JTextField>();
 		izbranaZbirka = comboBox.getSelectedItem().toString();
-		List<String> stolpci = GlavnoOkno.slovarSS.get(izbranaZbirka).get(0);
+		List<String> stolpci = SqlManager.beriZbirkoStolpci(izbranaZbirka);
 		
 		JLabel lblZbirka = new JLabel("Zbirka");
 		GridBagConstraints gbc_lblZbirka = new GridBagConstraints();
@@ -121,7 +123,7 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		gbc_lblIzbranaZbirka.insets = new Insets(0, 0, 5, 5);
 		gbc_lblIzbranaZbirka.gridx = 1;
 		gbc_lblIzbranaZbirka.gridy = 0;
-		gbc_lblIzbranaZbirka.gridwidth = 4;
+		gbc_lblIzbranaZbirka.gridwidth = 3;
 		contentPanel.add(lblIzbranaZbirka, gbc_lblIzbranaZbirka);
 		
 		for (int row = 1; row <= stolpci.size(); row++){
@@ -138,9 +140,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 			gbc_textField.gridx = 1;
 			gbc_textField.gridy = row;
-			gbc_textField.gridwidth = 4;
+			gbc_textField.gridwidth = 3;
 			contentPanel.add(textField, gbc_textField);
-			seznamTextField.add(textField);
+			slovarTextField.put(stolpci.get(row-1), textField);
 		}
 		
 		btnNazaj = new JButton("Nazaj");
@@ -159,18 +161,10 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		btnDodaj.addActionListener(this);
 		contentPanel.add(btnDodaj, gbc_btnDodaj);
 		
-		btnShrani = new JButton("Shrani");
-		btnShrani.addActionListener(this);
-		GridBagConstraints gbc_btnShrani = new GridBagConstraints();
-		gbc_btnShrani.gridx = 3;
-		gbc_btnShrani.gridy = stolpci.size()+1;
-		btnShrani.addActionListener(this);
-		contentPanel.add(btnShrani, gbc_btnShrani);
-		
-		btnIzhod = new JButton("Prekliči");
+		btnIzhod = new JButton("Izhod");
 		btnIzhod.addActionListener(this);
 		GridBagConstraints gbc_btnIzhod = new GridBagConstraints();
-		gbc_btnIzhod.gridx = 4;
+		gbc_btnIzhod.gridx = 3;
 		gbc_btnIzhod.gridy = stolpci.size()+1;
 		contentPanel.add(btnIzhod, gbc_btnIzhod);
 		
@@ -181,11 +175,12 @@ public class NovElementWindow extends JDialog implements ActionListener{
 	 * Metoda, ki doda element v vrsto za dodajanje (slovar PripravljalecPodatkov.elementiZaDodajanje).
 	 */
 	private void dodajVZbirko(){
-		List<String> element = new ArrayList<String>();
-		for (JTextField polje : seznamTextField){
-			element.add(polje.getText());
+		Map<String, String> element = new HashMap<String, String>();
+		for (String stolpec : slovarTextField.keySet()){
+			element.put(stolpec, slovarTextField.get(stolpec).getText());
 		}
-		GlavnoOkno.podatki.dodajElement(izbranaZbirka, element);
+		SqlManager.dodajElement(izbranaZbirka, element);
+		System.out.println(element);
 	}
 
 	@Override
@@ -195,7 +190,6 @@ public class NovElementWindow extends JDialog implements ActionListener{
 			vnesiElement();
 		}
 		else if (vir == btnIzhod){
-			GlavnoOkno.podatki.izprazniDodajanjeElementov();
 			dispose();
 		}
 		else if (vir == btnNazaj){
@@ -205,12 +199,6 @@ public class NovElementWindow extends JDialog implements ActionListener{
 		else if (vir == btnDodaj){
 			dodajVZbirko();
 			vnesiElement();
-		}
-		else if (vir == btnShrani){
-			// ERROR printa 2x
-			dodajVZbirko();
-			GlavnoOkno.podatki.dodajElemente();
-			dispose();
 		}
 	}
 
