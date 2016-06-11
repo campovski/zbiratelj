@@ -177,10 +177,9 @@ public class NovElementWindow extends JDialog implements ActionListener{
 	private void dodajVZbirko(){
 		Map<String, String> element = new HashMap<String, String>();
 		for (String stolpec : slovarTextField.keySet()){
-			element.put(stolpec, slovarTextField.get(stolpec).getText());
+			element.put(stolpec, slovarTextField.get(stolpec).getText().trim());
 		}
 		SqlManager.dodajElement(izbranaZbirka, element);
-		System.out.println(element);
 	}
 
 	@Override

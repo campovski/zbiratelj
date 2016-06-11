@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -26,8 +28,9 @@ import javax.swing.JLabel;
 import java.awt.Insets;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
-import baza.PripravljalecPodatkov;
+import baza.SqlManager;
 import io.CsvManager;
 
 /**
@@ -48,7 +51,6 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	private JButton btnPreklici;
 	private JButton btnZamenjaj;
 	private String vnesenaZbirka;
-	private PripravljalecPodatkov pripravljalec = GlavnoOkno.podatki;
 	
 	/**
 	 * Odpre okno, ki omogoca izbiro datoteke za uvoz in imena zbirke.
@@ -163,8 +165,9 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	 */
 	private void shraniZbirko(){
 		vnesenaZbirka = textField.getText();
-		if (pripravljalec.getSlovar().containsKey(vnesenaZbirka)){
-			error = new JDialog();
+		if (SqlManager.beriBazo().contains(vnesenaZbirka)){
+			error = new JDialog(SwingUtilities.windowForComponent(this));
+			error.setModal(true);
 			error.setTitle("Napaka");
 			
 			JPanel contentPanel = new JPanel();
@@ -214,22 +217,26 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	 */
 	private void potrdiShranjevanje(boolean izbris){
 		ArrayList<List<String>> seznamSeznamovVZbirki = csv.getDatoteka();
+		List<String> stolpci = seznamSeznamovVZbirki.get(0);
 		
 		if (izbris){
 			List<String> seznamZbirkZaIzbris = new ArrayList<String>();
 			seznamZbirkZaIzbris.add(vnesenaZbirka);
-			pripravljalec.izbrisiZbirke(seznamZbirkZaIzbris);
+			for (String zbirka : seznamZbirkZaIzbris){
+				SqlManager.izbrisiZbirko(zbirka);
+			}
 		}
 		
-		List<String> seznamNovaZbirka = new ArrayList<String>();
-		seznamNovaZbirka.add(vnesenaZbirka);
-		seznamNovaZbirka.addAll(seznamSeznamovVZbirki.get(0));
-		pripravljalec.dodajZbirko(seznamNovaZbirka);
+		SqlManager.dodajZbirko(vnesenaZbirka, stolpci);
+		
 		for (int i = 1; i < seznamSeznamovVZbirki.size(); i++){
-			pripravljalec.dodajElement(vnesenaZbirka, seznamSeznamovVZbirki.get(i));
+			Map<String, String> element = new HashMap<String, String>();
+			for (int j = 0; j < stolpci.size(); j++){
+				element.put(stolpci.get(j), seznamSeznamovVZbirki.get(i).get(j));
+			}
+			SqlManager.dodajElement(vnesenaZbirka, element);
 		}
-		pripravljalec.dodajElemente();
-		System.out.println(pripravljalec.getSlovar());
+		
 		dispose();
 	}
 	

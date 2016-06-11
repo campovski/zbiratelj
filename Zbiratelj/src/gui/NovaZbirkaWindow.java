@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import baza.SqlManager;
 
@@ -50,7 +51,6 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 		contentPanel = new JPanel();
 		
 		JScrollPane scroll = new JScrollPane(contentPanel);
-		//setResizable(false);
 	
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
@@ -142,54 +142,59 @@ public class NovaZbirkaWindow extends JDialog implements ActionListener{
 			gbc_textField.gridy = rowCounter - 1;
 			textField.setColumns(10);
 			stolpciPanel.add(textField, gbc_textField);
+			arrTextField.add(textField);
 			
 			contentPanel.updateUI();
 			pack();
 		}
-		else if (vir == btnShrani && !textFieldZbirka.getText().isEmpty()){
+		else if (vir == btnShrani && !textFieldZbirka.getText().isEmpty() && textFieldZbirka.getText().trim().length() > 0){
 			stolpci = new ArrayList<String>();
+			arrTextField.size();
 			for (JTextField polje : arrTextField){
 				String vnos = polje.getText();
-				if (! vnos.isEmpty()){
+				if (!vnos.isEmpty() && vnos.trim().length() > 0){
 					stolpci.add(polje.getText());
 				}
 			}
 			
-			if (SqlManager.beriBazo().contains(textFieldZbirka.getText())){
-				error = new JDialog();
-				error.setTitle("Napaka");
-				
-				JPanel contentPanel = new JPanel();
-				GridBagLayout gbl_contentPanel = new GridBagLayout();
-				gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
-				gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
-				gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-				gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-				contentPanel.setLayout(gbl_contentPanel);
-				error.getContentPane().add(contentPanel);
-				
-				JLabel napis = new JLabel("<html>Zbirka z imenom '"+textFieldZbirka.getText()+"' že obstaja!<br>Prosim vnesi drugo ime.</html>");
-				GridBagConstraints gbc_napis = new GridBagConstraints();
-				gbc_napis.insets = new Insets(0, 0, 0, 5);
-				gbc_napis.gridx = 0;
-				gbc_napis.gridy = 0;
-				contentPanel.add(napis, gbc_napis);
-				
-				btnOk = new JButton("OK");
-				btnOk.addActionListener(this);
-				GridBagConstraints gbc_ok = new GridBagConstraints();
-				gbc_ok.insets = new Insets(0, 0, 0, 5);
-				gbc_ok.gridx = 0;
-				gbc_ok.gridy = 1;
-				contentPanel.add(btnOk, gbc_ok);
-
-				error.pack();
-				error.setVisible(true);
-			}
-			else {
-				// TODO obravnavaj razlicne returne
-				System.out.println(SqlManager.dodajZbirko(textFieldZbirka.getText(), stolpci));
-				dispose();
+			if (!stolpci.isEmpty()){
+				if (SqlManager.beriBazo().contains(textFieldZbirka.getText())){
+					error = new JDialog(SwingUtilities.windowForComponent(this));
+					error.setModal(true);
+					error.setTitle("Napaka");
+					
+					JPanel contentPanel = new JPanel();
+					GridBagLayout gbl_contentPanel = new GridBagLayout();
+					gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
+					gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+					gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+					gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+					contentPanel.setLayout(gbl_contentPanel);
+					error.getContentPane().add(contentPanel);
+					
+					JLabel napis = new JLabel("<html>Zbirka z imenom '"+textFieldZbirka.getText()+"' že obstaja!<br>Prosim vnesi drugo ime.</html>");
+					GridBagConstraints gbc_napis = new GridBagConstraints();
+					gbc_napis.insets = new Insets(0, 0, 0, 5);
+					gbc_napis.gridx = 0;
+					gbc_napis.gridy = 0;
+					contentPanel.add(napis, gbc_napis);
+					
+					btnOk = new JButton("OK");
+					btnOk.addActionListener(this);
+					GridBagConstraints gbc_ok = new GridBagConstraints();
+					gbc_ok.insets = new Insets(0, 0, 0, 5);
+					gbc_ok.gridx = 0;
+					gbc_ok.gridy = 1;
+					contentPanel.add(btnOk, gbc_ok);
+	
+					error.pack();
+					error.setVisible(true);
+				}
+				else {
+					// TODO obravnavaj razlicne returne
+					SqlManager.dodajZbirko(textFieldZbirka.getText(), stolpci);
+					dispose();
+				}
 			}
 		}
 		else if (vir == btnOk){

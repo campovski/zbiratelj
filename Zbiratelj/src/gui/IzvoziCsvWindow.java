@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import baza.SqlManager;
 import io.CsvManager;
 
 import java.awt.GridBagConstraints;
@@ -84,7 +85,7 @@ public class IzvoziCsvWindow extends JDialog implements ActionListener{
 		slovarCheckBoxZbirka = new HashMap<JCheckBox, String>();
 		int rowCounter = 0;
 		
-		for (String zbirka : GlavnoOkno.podatki.getSlovar().keySet()){
+		for (String zbirka : SqlManager.beriBazo()){
 			rowCounter++;
 			
 			JLabel lblZbirka = new JLabel(zbirka);
@@ -129,14 +130,15 @@ public class IzvoziCsvWindow extends JDialog implements ActionListener{
 				}
 			}
 			String naslovDirektorija = textFieldDatoteka.getText();
-			System.out.println(zbirke);
+			
 			try {
 				csv.narediCsv(naslovDirektorija, zbirke);
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+		dispose();
 	}
 
 }

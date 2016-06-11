@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import baza.PripravljalecPodatkov;
+import baza.SqlManager;
 
 public class CsvManager {
 	private ArrayList<List<String>> datoteka;
@@ -28,6 +28,7 @@ public class CsvManager {
 		String vrstica;
 		while ((vrstica = reader.readLine()) != null){
 			String[] vrstica1 = vrstica.split(",");
+			// TODO String[] vrstica1 = vrstica.split("\\|");
 			List<String> vrstica2 = new ArrayList<String>();
 			for (String beseda : vrstica1){
 				vrstica2.add(beseda);
@@ -45,12 +46,8 @@ public class CsvManager {
 	 * @throws IOException
 	 */
 	public void narediCsv(String naslovDirektorija, List<String> zbirke) throws IOException{
-		// TODO preveri, ali morda ze obstaja CSV, ki ga hoces naredit!
 		
 		String osName = System.getProperty("os.name");
-		
-		PripravljalecPodatkov pripravljalec = new PripravljalecPodatkov();
-		Map<String, List<List<String>>> slovar = pripravljalec.getSlovar();
 		
 		for (String zbirka : zbirke){
 			String fileName = null;
@@ -61,16 +58,37 @@ public class CsvManager {
 				fileName = naslovDirektorija+"\\"+zbirka+".csv";
 			}
 			
+			File f = new File(fileName);
+			if (f.exists() && !f.isDirectory()){
+				f.delete();
+			}
+			
 			FileWriter writer = new FileWriter(fileName);
-			List<List<String>> seznamElementov = slovar.get(zbirka);
-			for (List<String> element : seznamElementov){
-				for (int i = 0; i < element.size(); i++){
-					writer.append(element.get(i));
-					if (i < element.size() - 1){
+			Map<Integer, Map<String, String>> izbranaZbirka = SqlManager.beriZbirkoPodatki(zbirka);
+			int stevilo_stolpcev = SqlManager.beriZbirkoStolpci(zbirka).size();
+			
+			int n = 0;
+			for (String stolpec : SqlManager.beriZbirkoStolpci(zbirka)){
+				writer.append(stolpec);
+				n++;
+				if (n < stevilo_stolpcev){
+					writer.append(",");
+				}
+			}
+			writer.append("\n");
+			n = 0;
+			
+			for (int i : izbranaZbirka.keySet()){
+				Map<String, String> element = izbranaZbirka.get(i);
+				for (String stolpec : SqlManager.beriZbirkoStolpci(zbirka)){
+					writer.append(element.get(stolpec));
+					n++;
+					if (n < stevilo_stolpcev){
 						writer.append(",");
 					}
 				}
 				writer.append("\n");
+				n = 0;
 			}
 			writer.flush();
 			writer.close();
