@@ -174,8 +174,8 @@ public class GlavnoOkno extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * Metoda, ki narise UI. To stori tako, da najprej pogleda, v katerem stanju smo
-	 * in ali lahko urejamo ter se potem na podlagi teh podatkov odloci, kaj naj narise.
+	 * Metoda, ki narise UI. To stori tako, da najprej pogleda, ali lahko 
+	 * urejamo ter se potem na podlagi teh podatkov odloci, kaj naj narise.
 	 */
 	public void setupUI(){
 		contentPane.removeAll();

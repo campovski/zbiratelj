@@ -16,10 +16,14 @@ import java.util.Map;
 
 /**
  * @author nina
- * Razred, ki je posrednik med PripravljalecPodatkov in MySQL serverjem.
+ * Razred, ki je posrednik med GlavnoOkno in NarisiZbirkoWindow ter MySQL serverjem.
  */
 public class SqlManager {
 	
+	/**
+	 * Metoda, ki iz baze prebere in vrne seznam vseh zbirk.
+	 * @return zbirke
+	 */
 	public static List<String> beriBazo(){
 		List<String> zbirke = new ArrayList<String>();
 		
@@ -42,7 +46,12 @@ public class SqlManager {
 		}
 		return zbirke;
 	}
-	
+
+	/**
+	 * Metoda, ki vrne vse stolpce za doloceno zbirko.
+	 * @param zbirka
+	 * @return stolpci
+	 */
 	public static List<String> beriZbirkoStolpci(String zbirka){
 		List<String> stolpci = new ArrayList<String>();
 		try {
@@ -58,7 +67,12 @@ public class SqlManager {
 		}
 		return stolpci;
 	}
-	
+
+	/**
+	 * Metoda, ki iz baze prebere vse podatke za doloceno zbirko.
+	 * @param zbirka
+	 * @return elementi
+	 */
 	public static Map<Integer, Map<String, String>> beriZbirkoPodatki(String zbirka){
 		Map<Integer, Map<String, String>> elementi = new HashMap<Integer, Map<String, String>>();
 		
@@ -87,7 +101,13 @@ public class SqlManager {
 		}
 		return elementi;
 	}
-	
+
+	/**
+	 * Metoda, ki doda element v bazo.
+	 * @param zbirka
+	 * @param element
+	 * @return
+	 */
 	public static int dodajElement(String zbirka, Map<String, String> element){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -111,7 +131,13 @@ public class SqlManager {
 		}
 		return 0;
 	}
-	
+
+	/**
+	 * Metoda, ki doda zbirko v bazo.
+	 * @param zbirka
+	 * @param stolpci
+	 * @return
+	 */
 	public static int dodajZbirko(String zbirka, List<String> stolpci){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -132,7 +158,12 @@ public class SqlManager {
 		}
 		return 0;
 	}
-	
+
+	/**
+	 * Metoda, ki element izbrise iz baze.
+	 * @param id
+	 * @return
+	 */
 	public static int izbrisiElement(int id){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -150,7 +181,12 @@ public class SqlManager {
 		}
 		return 0;
 	}
-	
+
+	/**
+	 * Metoda, ki zbirko zapise v bazo.
+	 * @param zbirka
+	 * @return
+	 */
 	public static int izbrisiZbirko(String zbirka){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");

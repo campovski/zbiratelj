@@ -38,7 +38,8 @@ public class NarisiZbirkoWindow extends JDialog implements ActionListener{
 	private String zbirkaZaRisanje;
 
 	/**
-	 * Metoda narise zbirko, ki je shranjena v zbirkaZaRisanje. Ce je omogoceno urejanje, doda se JCheckBoxe.
+	 * Naredi frame.
+	 * @param zbirkaZaRisanje
 	 */
 	public NarisiZbirkoWindow(String zbirkaZaRisanje){
 		
@@ -85,6 +86,9 @@ public class NarisiZbirkoWindow extends JDialog implements ActionListener{
 		setupUI();
 	}
 	
+	/**
+	 * Metoda narise zbirko, ki je shranjena v zbirkaZaRisanje. Ce je omogoceno urejanje, doda se JCheckBoxe.
+	 */
 	private void narisi(){
 		
 		JScrollPane scroll = new JScrollPane(contentPane);
@@ -166,8 +170,8 @@ public class NarisiZbirkoWindow extends JDialog implements ActionListener{
 	}
 
 	/**
-	 * Metoda, ki narise UI. To stori tako, da najprej pogleda, v katerem stanju smo
-	 * in ali lahko urejamo ter se potem na podlagi teh podatkov odloci, kaj naj narise.
+	 * Metoda, ki narise UI. To stori tako, da najprej pogleda, ali lahko 
+	 * urejamo ter se potem na podlagi teh podatkov odloci, kaj naj narise.
 	 */
 	public void setupUI(){
 		getContentPane().removeAll();
