@@ -54,17 +54,24 @@ public class SqlManager {
 	 */
 	public static List<String> beriZbirkoStolpci(String zbirka){
 		List<String> stolpci = new ArrayList<String>();
+		Map<Integer, String> stolpciMap = new HashMap<Integer, String>();
+		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + "testdb" + "?", "testuser", "password");
 			ResultSet stolpciRS = con.createStatement().executeQuery("SELECT * FROM stolpci WHERE stolpci_zbirka = " + "'" + zbirka + "'");
 			while (stolpciRS.next()){
-				stolpci.add(stolpciRS.getString("stolpci_ime"));
+				stolpciMap.put(stolpciRS.getInt("stolpci_stevilka"), stolpciRS.getString("stolpci_ime"));
 			}
 		}
 		catch (Exception e){
 			e.printStackTrace();
 		}
+		
+		for (int i = 0; i < stolpciMap.size(); i++){
+			stolpci.add(stolpciMap.get(i));
+		}
+		
 		return stolpci;
 	}
 
@@ -144,8 +151,10 @@ public class SqlManager {
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + "testdb" + "?", "testuser", "password");
 			con.prepareStatement("INSERT INTO zbirke(zbirke_ime) VALUES ( '" + zbirka + "')").executeUpdate();
 			
+			int i = 0;
 			for (String stolpec : stolpci){
-				con.prepareStatement("INSERT INTO stolpci (stolpci_zbirka,stolpci_ime) VALUES ( '" + zbirka + "', '" + stolpec + "')").executeUpdate();
+				con.prepareStatement("INSERT INTO stolpci (stolpci_zbirka,stolpci_ime,stolpci_stevilka) VALUES ( '" + zbirka + "', '" + stolpec + "', '" + i + "')").executeUpdate();
+				i++;
 			}
 			con.close();
 		}

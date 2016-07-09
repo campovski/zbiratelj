@@ -18,17 +18,26 @@ public class CsvManager {
 	/**
 	 * Prebere izbran CSV v seznam datoteka.
 	 * @param f
+	 * @param locilo
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public void preberiCsv(File f) throws IOException, FileNotFoundException{
+	public void preberiCsv(File f, String locilo) throws IOException, FileNotFoundException{
 		datoteka = new ArrayList<List<String>>();
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		
 		String vrstica;
+		String[] vrstica1 = null;
 		while ((vrstica = reader.readLine()) != null){
-			String[] vrstica1 = vrstica.split(",");
-			// TODO String[] vrstica1 = vrstica.split("\\|");
+			if (locilo.equals(",") || locilo.equals(";")){
+				vrstica1 = vrstica.split(locilo);
+			}
+			else if (locilo.equals("|")){
+				vrstica1 = vrstica.split("\\|");
+			}
+			else if (locilo.equals("space")){
+				vrstica1 = vrstica.split(" ");
+			}
 			List<String> vrstica2 = new ArrayList<String>();
 			for (String beseda : vrstica1){
 				vrstica2.add(beseda);

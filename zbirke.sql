@@ -6,6 +6,7 @@ CREATE TABLE zbirke (
 CREATE TABLE stolpci (
        stolpci_ime VARCHAR(100) NOT NULL,
        stolpci_zbirka VARCHAR(100),
+       stolpci_stevilka INT,
        FOREIGN KEY (stolpci_zbirka) REFERENCES zbirke(zbirke_ime) ON DELETE CASCADE,
        PRIMARY KEY (stolpci_ime, stolpci_zbirka)
 );

@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
@@ -51,6 +52,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	private JButton btnPreklici;
 	private JButton btnZamenjaj;
 	private String vnesenaZbirka;
+	private JComboBox<String> comboBox;
 	
 	/**
 	 * Odpre okno, ki omogoca izbiro datoteke za uvoz in imena zbirke.
@@ -113,12 +115,32 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		});
 		contentPanel.add(textFieldDatoteka, gbc_textFieldDatoteka);
 		
+		JLabel lblLocilo = new JLabel("Ločilo");
+		GridBagConstraints gbc_lblLocilo = new GridBagConstraints();
+		gbc_lblLocilo.anchor = GridBagConstraints.EAST;
+		gbc_lblLocilo.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLocilo.gridx = 0;
+		gbc_lblLocilo.gridy = 2;
+		gbc_lblLocilo.weighty = 1;
+		contentPanel.add(lblLocilo, gbc_lblLocilo);
+		
+		String[] seznam = {",", ";", "|", "space"};
+		
+		comboBox = new JComboBox<String>(seznam);
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.gridx = 1;
+		gbc_comboBox.gridy = 2;
+		gbc_comboBox.gridwidth = 1;
+		contentPanel.add(comboBox, gbc_comboBox);
+		
 		btnOdpri = new JButton("Odpri");
 		btnOdpri.addActionListener(this);
 		GridBagConstraints gbc_btnOdpri = new GridBagConstraints();
 		gbc_btnOdpri.insets = new Insets(0, 0, 5, 5);
 		gbc_btnOdpri.gridx = 1;
-		gbc_btnOdpri.gridy = 2;
+		gbc_btnOdpri.gridy = 3;
 		contentPanel.add(btnOdpri, gbc_btnOdpri);
 		
 		btnShrani = new JButton("Shrani");
@@ -127,7 +149,7 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 		GridBagConstraints gbc_btnShrani = new GridBagConstraints();
 		gbc_btnShrani.insets = new Insets(0, 0, 5, 5);
 		gbc_btnShrani.gridx = 2;
-		gbc_btnShrani.gridy = 2;
+		gbc_btnShrani.gridy = 3;
 		contentPanel.add(btnShrani, gbc_btnShrani);
 		
 		pack();
@@ -245,10 +267,11 @@ public class UvoziCsvWindow extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		Object vir = arg0.getSource();
 		if (vir == btnOdpri){
-			if (datoteka != null){
+			String locilo = comboBox.getSelectedItem().toString();
+			if (datoteka != null && locilo != null){
 				csv = new CsvManager();
 				try {
-					csv.preberiCsv(datoteka);
+					csv.preberiCsv(datoteka, locilo);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
